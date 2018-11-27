@@ -5,7 +5,8 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 1Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn3SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -13,7 +14,8 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 2Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn4SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -21,7 +23,8 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 3Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn5SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -29,7 +32,8 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 4Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn6SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -37,7 +41,8 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 5Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn7SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -45,7 +50,8 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 6Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn8SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -53,7 +59,8 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 7Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn9SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -61,14 +68,16 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd 8Ball_diffuse.png
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl blinn10SG
 illum 4
 Kd 0.88 0.88 0.88
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 Ni 1.00
-Ks 0.50 0.50 0.50
+Ks 0.00 0.00 0.00
+map_Ks ball_spec.png
 newmtl lambert2SG
 illum 4
 Kd 0.00 0.00 0.00

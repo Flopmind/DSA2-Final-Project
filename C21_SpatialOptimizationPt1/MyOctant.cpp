@@ -18,6 +18,7 @@ MyOctant::MyOctant(int a_iLim)
 {
 	Init();
 	m_iLim = a_iLim;
+	m_iDim = 0;
 	std::vector<MyEntity*> l_Entity_List = m_pEntityMngr->GetEntityList();
 	uint iEntityCount = l_Entity_List.size();
 	std::vector<vector3> v3MaxMin_list;
@@ -120,7 +121,7 @@ void MyOctant::Subdivide()
 			//...not over the limit, so add dimensions and return
 			for (size_t j = 0; j < m_pChild[i]->m_ContainedEnts.size(); j++)
 			{
-				m_pEntityMngr->AddDimension(m_pChild[i]->m_ContainedEnts[j]->GetUniqueID(), m_iDim);
+				m_pEntityMngr->AddDimension(m_pChild[i]->m_ContainedEnts[j]->GetUniqueID(), m_pChild[i]->m_iDim);
 			}
 		}
 	}

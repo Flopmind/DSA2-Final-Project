@@ -7,6 +7,7 @@ void MyEntityManager::Init(void)
 	m_uEntityCount = 0;
 	m_mEntityArray = nullptr;
 	m_EntityList.clear();
+	m_DimMap = std::map<int, std::vector<MyEntity*>>();
 }
 void MyEntityManager::Release(void)
 {
@@ -185,11 +186,15 @@ void Simplex::MyEntityManager::Update(void)
 	}
 
 	//check collisions
-	for (int i = 0; i < (int)m_uEntityCount - 1; i++)
+	//iterating through the dim dictionary (map)
+	for (auto const&x : m_DimMap) 
 	{
-		for (int j = i + 1; j < (int)m_uEntityCount; j++)
+		for (size_t i = 0; i < x.second.size(); i++)
 		{
-			m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
+			for (size_t j = i+1; j < x.second.size(); j++)
+			{
+				m_DimMap[x.first][i]->IsColliding(m_DimMap[x.first][j]);
+			}
 		}
 	}
 }
@@ -305,7 +310,14 @@ void Simplex::MyEntityManager::AddDimension(uint a_uIndex, uint a_uDimension)
 	if (a_uIndex >= m_EntityList.size())
 		a_uIndex = m_EntityList.size() - 1;
 
-	return m_EntityList[a_uIndex]->AddDimension(a_uDimension);
+	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
+	if (it != m_DimMap.end())
+		m_DimMap[(int)a_uDimension].push_back(m_EntityList[a_uIndex]);
+	else
+	{
+		m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
+		m_DimMap[a_uDimension].push_back(m_EntityList[a_uIndex]);
+	}
 }
 void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimension)
 {
@@ -314,7 +326,14 @@ void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimensio
 	//if the entity exists
 	if (pTemp)
 	{
-		pTemp->AddDimension(a_uDimension);
+		std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
+		if (it != m_DimMap.end())
+			m_DimMap[(int)a_uDimension].push_back(pTemp);
+		else
+		{
+			m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
+			m_DimMap[a_uDimension].push_back(pTemp);
+		}
 	}
 }
 void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
@@ -327,7 +346,13 @@ void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 	if (a_uIndex >= m_EntityList.size())
 		a_uIndex = m_EntityList.size() - 1;
 
-	return m_EntityList[a_uIndex]->RemoveDimension(a_uDimension);
+	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
+	if (it != m_DimMap.end()) {
+		std::vector<MyEntity*>::iterator it = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), m_EntityList[a_uIndex]);//oh my god fuck iterators who thought this was okay
+		if (it != m_DimMap[a_uDimension].end())
+			m_DimMap[a_uDimension].erase(it);
+	}
+
 }
 void Simplex::MyEntityManager::RemoveDimension(String a_sUniqueID, uint a_uDimension)
 {
@@ -336,7 +361,12 @@ void Simplex::MyEntityManager::RemoveDimension(String a_sUniqueID, uint a_uDimen
 	//if the entity exists
 	if (pTemp)
 	{
-		pTemp->RemoveDimension(a_uDimension);
+		std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
+		if (it != m_DimMap.end()) {
+			std::vector<MyEntity*>::iterator it = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), pTemp);
+			if (it != m_DimMap[a_uDimension].end())
+				m_DimMap[a_uDimension].erase(it);
+		}
 	}
 }
 void Simplex::MyEntityManager::ClearDimensionSet(uint a_uIndex)
