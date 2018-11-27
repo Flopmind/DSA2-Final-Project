@@ -135,6 +135,7 @@ void Simplex::MyEntity::GenUniqueID(String& a_sUniqueID)
 }
 void Simplex::MyEntity::AddDimension(uint a_uDimension)
 {
+	//TODO: get a reference to the entity manager and use new add dim func in that
 	//we need to check that this dimension is not already allocated in the list
 	if (IsInDimension(a_uDimension))
 		return;//it is, so there is no need to add

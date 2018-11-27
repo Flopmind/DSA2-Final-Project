@@ -172,6 +172,8 @@ MyEntityManager::~MyEntityManager(){Release();};
 // other methods
 void Simplex::MyEntityManager::Update(void)
 {
+	//TODO: change how the collisions are handled here, should be iterating through a member list of lists representing the dimensions to call collisions
+
 	//Clear all collisions
 	for (uint i = 0; i < m_uEntityCount; i++)
 	{
