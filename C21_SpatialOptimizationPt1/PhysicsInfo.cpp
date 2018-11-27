@@ -9,6 +9,8 @@ void Simplex::PhysicsInfo::ApplyForce(vector3 force)
 
 void Simplex::PhysicsInfo::UpdateVelocity()
 {
+	if (acceleration == vector3(0.0f, 0.0f, 0.0f)) return;
+
 	velocity += acceleration;
 
 	// clamp magnitude of velocity to max speed
@@ -16,6 +18,11 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 	{
 		velocity = glm::normalize(velocity) * MAX_SPEED;
 	}
+}
+
+vector3 Simplex::PhysicsInfo::GetVelocity()
+{
+	return velocity;
 }
 
 PhysicsInfo::PhysicsInfo(float mss)

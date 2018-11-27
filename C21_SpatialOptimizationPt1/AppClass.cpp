@@ -21,6 +21,8 @@ void Application::InitVariables(void)
 	matrix4 m4Position;
 	uint uIndex = 0;
 
+	poolBallInfo = std::map<MyEntity*, PhysicsInfo>();
+
 	/*for (int i = 0; i < nSquare; i++)
 	{
 		
@@ -45,6 +47,9 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
+		PhysicsInfo info = PhysicsInfo(1.0f);
+		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
+		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
 		//m_pEntityMngr->AddDimension(-1, uIndex);
 		//uIndex++;
 	}
@@ -110,6 +115,12 @@ void Application::InitVariables(void)
 	m4Position = glm::translate(v3Position); //variable defined in above pragam region
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
+	cueBall = m_pEntityMngr->GetEntity(-1);
+	cueBallRB = cueBall->GetRigidBody();
+	PhysicsInfo info = PhysicsInfo(1.0f);
+	poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(cueBall, info));
+
+
 	m_pEntityMngr->Update();
 	m_pRoot = new MyOctant(6);
 
@@ -133,8 +144,24 @@ void Application::Update(void)
 	//Is the first person camera active?
 	CameraRotation();
 
+	// get the force with which to hit the cue ball
 	GetCueForce();
-	
+
+	std::map<MyEntity*, PhysicsInfo>::iterator it;
+
+	// update the velocity and move all the balls
+	for (it = poolBallInfo.begin(); it != poolBallInfo.end(); it++)
+	{
+		(it->second).UpdateVelocity();
+		vector3 vel = (it->second).GetVelocity();
+		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
+	}
+
+	/*vector3 vel = poolBallInfo[cueBall].GetVelocity();
+	poolBallInfo[cueBall].UpdateVelocity();
+	std::cout << "Cue Ball Velocity: " << "( "<< vel.x  << ", " << vel.y << ", " << vel.z << ")" << std::endl;
+	cueBall->SetModelMatrix(cueBall->GetModelMatrix() * glm::translate(vel));*/
+
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 
@@ -179,6 +206,7 @@ void Application::Display(void)
 }
 void Application::Release(void)
 {
+
 	SafeDelete(m_pRoot);
 	//release GUI
 	ShutdownGUI();

@@ -1,6 +1,8 @@
 #ifndef __PHYSICSINFO_H_
 #define __PHYSICSINFO_H_
-#include "AppClass.h"
+
+#include "Definitions.h"
+
 
 namespace Simplex
 {
@@ -10,10 +12,11 @@ namespace Simplex
 		vector3 velocity;
 		vector3 acceleration;
 		float mass;
-		const int MAX_SPEED = 0.5f;
+		const float MAX_SPEED = 1.0f;
 
 		void ApplyForce(vector3 force);
 		void UpdateVelocity();
+		vector3 GetVelocity();
 
 		PhysicsInfo(float mss = 1.0f);
 		~PhysicsInfo();
