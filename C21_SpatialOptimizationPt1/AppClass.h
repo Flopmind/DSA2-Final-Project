@@ -33,7 +33,7 @@ class Application
 	float prevDeltaMouse = 0.0f;
 		
 private:
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
+	String m_sProgrammer = "Large HeadDesk Colliders"; //programmer
 
 	static ImGuiObject gui; //GUI object
 	bool m_bGUI_Main = true; //show Main GUI window?

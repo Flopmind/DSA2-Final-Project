@@ -17,9 +17,9 @@ void Application::InitVariables(void)
 	m_pEntityMngr = MyEntityManager::GetInstance();
 
 	int nSquare = 500;
+	vector3 v3Position;
+	matrix4 m4Position;
 	uint uIndex = 0;
-	m_pEntityMngr->AddEntity("Models\\cueBall.obj");
-	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(50.0f, 0.0f, 0.0f)));
 
 	/*for (int i = 0; i < nSquare; i++)
 	{
@@ -32,6 +32,84 @@ void Application::InitVariables(void)
 		uIndex++;
 	
 	}*/
+
+		//Adds the balls to the scene
+#pragma region balls
+
+	for (int i = 1; i < 9; i++)
+	{
+		Simple:String name = "Models\\";
+		name += std::to_string(i);
+		name += "Ball.obj";
+		m_pEntityMngr->AddEntity(name);
+		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
+		matrix4 m4Position = glm::translate(v3Position);
+		m_pEntityMngr->SetModelMatrix(m4Position);
+		//m_pEntityMngr->AddDimension(-1, uIndex);
+		//uIndex++;
+	}
+
+#pragma endregion balls
+
+	//Adds Pockets to the scene
+#pragma region pockets
+
+	//front left bottom
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(-35.0f, -35.0f, 35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+	//front right bottom
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(35.0f, -35.0f, 35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+	//front right top
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(35.0f, 35.0f, 35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+	 //front left top
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(-35.0f, 35.0f, 35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+	//back left bottom
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(-35.0f, -35.0f, -35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+	//back right bottom
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(35.0f, -35.0f, -35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+	//back right top
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(35.0f, 35.0f, -35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+	//back left top
+	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	v3Position = vector3(-35.0f, 35.0f, -35.0f);
+	m4Position = glm::translate(v3Position);
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
+#pragma endregion pockets
+
+	//Adds Cue ball to the scene
+	m_pEntityMngr->AddEntity("Models\\cueBall.obj");
+	v3Position = vector3(0.0f, 0.0f, 0.0f); //variable defined in above pragam region
+	m4Position = glm::translate(v3Position); //variable defined in above pragam region
+	m_pEntityMngr->SetModelMatrix(m4Position);
+
 	m_pEntityMngr->Update();
 	m_pRoot = new MyOctant(6);
 
