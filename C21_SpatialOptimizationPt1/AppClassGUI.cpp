@@ -46,6 +46,12 @@ void Application::DrawGUI(void)
 			ImGui::Text("	 F4: Orthographic Z\n");
 			ImGui::Separator();
 			ImGui::TextColored(ImColor(255, 255, 0), "Spatial Optimization\n");
+			int textCueForce = static_cast<int>(cueForce);
+			ImGui::Separator();
+			ImGui::Text("Press 'F' to Toggle Focus on Cue Ball");
+			ImGui::Text("Left Click and Drag to Increase Force");
+			ImGui::Text("Force: %i", textCueForce);
+			ImGui::Separator();
 		}
 		ImGui::End();
 	}
@@ -282,6 +288,7 @@ void Application::NewFrame()
 	// Start the frame
 	ImGui::NewFrame();
 }
+
 void Application::InitIMGUI(void)
 {
 	ImGuiIO& io = ImGui::GetIO();

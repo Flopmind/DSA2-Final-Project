@@ -19,6 +19,11 @@ void Application::ProcessMousePressed(sf::Event a_event)
 	default: break;
 	case sf::Mouse::Button::Left:
 		gui.m_bMousePressed[0] = true;
+		if (followCue)
+		{
+			hittingCue = true;
+			SetCursorPos(centerX, centerY); //Position the mouse in the center
+		}
 		break;
 	case sf::Mouse::Button::Middle:
 		gui.m_bMousePressed[1] = true;
@@ -40,6 +45,8 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 	default: break;
 	case sf::Mouse::Button::Left:
 		gui.m_bMousePressed[0] = false;
+		hittingCue = false;
+		cueForce = 0;
 		break;
 	case sf::Mouse::Button::Middle:
 		gui.m_bMousePressed[1] = false;
@@ -77,6 +84,14 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
 		m_bModifier = true;
+		break;
+	case sf::Keyboard::F:
+		followCue = !followCue;
+		if (followCue)
+		{
+			MyEntity* cueBall = m_pEntityMngr->GetEntity(m_pEntityMngr->GetEntityCount() - 1);
+			FocusOnCue(cueBall);
+		}
 		break;
 	}
 	
@@ -344,6 +359,41 @@ void Application::ArcBall(float a_fSensitivity)
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 								   //return qArcBall; // return the new quaternion orientation
 }
+
+void Simplex::Application::GetCueForce()
+{
+	if (!hittingCue) return;
+
+	uint mouseX;
+	uint mouseY;
+	//uint centerX;
+	//uint centerY;
+
+	//Initialize the position of the pointer to the middle of the screen
+	//centerX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;
+	//centerY = m_pSystem->GetWindowY() + m_pSystem->GetWindowHeight() / 2;
+
+	//Calculate the position of the mouse and store it
+	POINT pt;
+	GetCursorPos(&pt);
+	mouseX = pt.x;
+	mouseY = pt.y;
+
+	float deltaMouse = glm::distance(vector2(mouseX, mouseY), vector2(centerX, centerY));
+	float trans = deltaMouse - prevDeltaMouse;
+	float maxTrans = MapValue(deltaMouse, 0.0f, 500.0f, 1.8f, 0.0f);
+	if (trans > maxTrans)
+	{
+		deltaMouse -= (trans - maxTrans);
+	}
+
+	vector2 dir = glm::normalize(vector2(mouseX, mouseY) - vector2(centerX, centerY));
+	vector2 newCursorPos = vector2(centerX, centerY) + dir * deltaMouse;
+	SetCursorPos(newCursorPos.x, newCursorPos.y);
+	cueForce = deltaMouse;
+	prevDeltaMouse = deltaMouse;
+}
+
 void Application::CameraRotation(float a_fSpeed)
 {
 	if (m_bFPC == false)
@@ -410,25 +460,79 @@ void Application::ProcessKeyboard(void)
 	if (bMultiplier)
 		fMultiplier = 5.0f;
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		m_pCameraMngr->MoveForward(m_fMovementSpeed * fMultiplier);
+	if (!followCue)
+	{
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		m_pCameraMngr->MoveForward(-m_fMovementSpeed * fMultiplier);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+			m_pCameraMngr->MoveForward(m_fMovementSpeed * fMultiplier);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		m_pCameraMngr->MoveSideways(-m_fMovementSpeed * fMultiplier);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			m_pCameraMngr->MoveForward(-m_fMovementSpeed * fMultiplier);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		m_pCameraMngr->MoveSideways(m_fMovementSpeed * fMultiplier);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			m_pCameraMngr->MoveSideways(-m_fMovementSpeed * fMultiplier);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-		m_pCameraMngr->MoveVertical(-m_fMovementSpeed * fMultiplier);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			m_pCameraMngr->MoveSideways(m_fMovementSpeed * fMultiplier);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-		m_pCameraMngr->MoveVertical(m_fMovementSpeed * fMultiplier);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+			m_pCameraMngr->MoveVertical(-m_fMovementSpeed * fMultiplier);
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+			m_pCameraMngr->MoveVertical(m_fMovementSpeed * fMultiplier);
+	}
+	else
+	{
+		bool pressed = false;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			cueRotation--;
+			pressed = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			cueRotation++;
+			pressed = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
+			cueCameraHeight++;
+			pressed = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		{
+			cueCameraHeight--;
+			pressed = true;
+		}
+
+		if (pressed)
+		{
+			vector3 up = m_pCameraMngr->GetUpward();
+			MyEntity* cueBall = m_pEntityMngr->GetEntity(0);
+			MyRigidBody* rb = cueBall->GetRigidBody();
+			vector3 center = rb->GetCenterGlobal();
+			vector3 cameraPos = m_pCameraMngr->GetPosition();
+
+			float x = glm::sin(glm::radians(cueRotation));
+			float y = center.y + cueCameraHeight * 0.01f;
+			float z = glm::cos(glm::radians(cueRotation));
+			vector3 newPos = center + glm::normalize(vector3(x, y, z)) * FOLLOW_DISTANCE;
+			m_pCameraMngr->SetPositionTargetAndUpward(newPos, center, up);
+		}
 #pragma endregion
+	}
 }
+
+void Simplex::Application::FocusOnCue(MyEntity * cueBall)
+{
+	MyRigidBody* rb = cueBall->GetRigidBody();
+	vector3 up = m_pCameraMngr->GetUpward();
+	vector3 center = rb->GetCenterGlobal();
+	vector3 cameraPos = m_pCameraMngr->GetPosition();
+	vector3 newPos = center + glm::normalize(cameraPos - center) * FOLLOW_DISTANCE;
+	m_pCameraMngr->SetPositionTargetAndUpward(newPos, center, up);
+}
+
 //Joystick
 void Application::ProcessJoystick(void)
 {
