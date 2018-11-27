@@ -20,6 +20,17 @@ class Application
 {
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	MyOctant* m_pRoot = nullptr;
+
+	// for hitting cue ball
+	bool followCue = false;
+	float cueRotation = 0.0f;
+	float cueCameraHeight = 0.0f;
+	const float FOLLOW_DISTANCE = 10.0f;
+	float cueForce = 0.0f;
+	bool hittingCue = false;
+	uint centerX;
+	uint centerY;
+	float prevDeltaMouse = 0.0f;
 		
 private:
 	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
@@ -310,6 +321,11 @@ private:
 	OUTPUT: ---
 	*/
 	void NewFrame(void);
+
+	void FocusOnCue(MyEntity* cueBall);
+
+	void GetCueForce();
+
 #pragma endregion
 
 #pragma region The Rule of Three

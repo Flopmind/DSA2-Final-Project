@@ -18,10 +18,10 @@ void Application::InitVariables(void)
 
 	int nSquare = 500;
 	uint uIndex = 0;
-	m_pEntityMngr->AddEntity("Minecraft\\Cube.obj");
+	m_pEntityMngr->AddEntity("Models\\cueBall.obj");
 	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(50.0f, 0.0f, 0.0f)));
 
-	for (int i = 0; i < nSquare; i++)
+	/*for (int i = 0; i < nSquare; i++)
 	{
 		
 		m_pEntityMngr->AddEntity("Minecraft\\Cube.obj");
@@ -31,9 +31,13 @@ void Application::InitVariables(void)
 		
 		uIndex++;
 	
-	}
+	}*/
 	m_pEntityMngr->Update();
 	m_pRoot = new MyOctant(6);
+
+	// Initialize the position of the pointer to the middle of the screen
+	centerX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;
+	centerY = m_pSystem->GetWindowY() + m_pSystem->GetWindowHeight() / 2;
 
 	
 	//m_pRoot = new MyOctant(vector3(10.0f, 10.0f, 10.0f), 50.0f);
@@ -50,6 +54,8 @@ void Application::Update(void)
 
 	//Is the first person camera active?
 	CameraRotation();
+
+	GetCueForce();
 	
 	//Update Entity Manager
 	m_pEntityMngr->Update();
