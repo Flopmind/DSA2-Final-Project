@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{A8C5934B-38F4-49D4-A0E2-9A8F3F2945D3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicX", "BasicX\BasicX.vcxproj", "{E745E25C-0143-42AC-A486-1395A4C972AE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C21_SpatialOptimizationPt1", "..\Simplex_2181\C21_SpatialOptimizationPt1\C21_SpatialOptimizationPt1.vcxproj", "{844D5FBC-A0E8-446D-AF24-7B6FAD8FD713}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C21_SpatialOptimizationPt1", "C21_SpatialOptimizationPt1\C21_SpatialOptimizationPt1.vcxproj", "{844D5FBC-A0E8-446D-AF24-7B6FAD8FD713}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
