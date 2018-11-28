@@ -41,6 +41,7 @@ public:
 	OUTPUT: index from the list of entities, -1 if not found
 	*/
 	int GetEntityIndex(String a_sUniqueID);
+
 	uint GetEntityCount();
 
 	/*

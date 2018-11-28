@@ -45,8 +45,16 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 	default: break;
 	case sf::Mouse::Button::Left:
 		gui.m_bMousePressed[0] = false;
-		hittingCue = false;
-		cueForce = 0;
+		if (hittingCue)
+		{
+			vector3 position = (cueBallRB->GetCenterGlobal());
+			vector3 direction = glm::normalize(position - m_pCameraMngr->GetPosition());
+			cueForce = MapValue(cueForce, 0.0f, 800.0f, 0.0f, 0.045f); // first range is how much drawing the mouse back impacts the force
+																	   // second range is possible forces (from 0 to max force)
+			poolBallInfo[cueBall].ApplyForce(direction * cueForce);
+			hittingCue = false;
+			cueForce = 0;
+		}
 		break;
 	case sf::Mouse::Button::Middle:
 		gui.m_bMousePressed[1] = false;
@@ -89,7 +97,6 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 		followCue = !followCue;
 		if (followCue)
 		{
-			MyEntity* cueBall = m_pEntityMngr->GetEntity(m_pEntityMngr->GetEntityCount() - 1);
 			FocusOnCue(cueBall);
 		}
 		break;
@@ -508,9 +515,7 @@ void Application::ProcessKeyboard(void)
 		if (pressed)
 		{
 			vector3 up = m_pCameraMngr->GetUpward();
-			MyEntity* cueBall = m_pEntityMngr->GetEntity(0);
-			MyRigidBody* rb = cueBall->GetRigidBody();
-			vector3 center = rb->GetCenterGlobal();
+			vector3 center = cueBallRB->GetCenterGlobal();
 			vector3 cameraPos = m_pCameraMngr->GetPosition();
 
 			float x = glm::sin(glm::radians(cueRotation));
@@ -525,9 +530,10 @@ void Application::ProcessKeyboard(void)
 
 void Simplex::Application::FocusOnCue(MyEntity * cueBall)
 {
-	MyRigidBody* rb = cueBall->GetRigidBody();
+	if (!cueBall) return;
+
 	vector3 up = m_pCameraMngr->GetUpward();
-	vector3 center = rb->GetCenterGlobal();
+	vector3 center = cueBallRB->GetCenterGlobal();
 	vector3 cameraPos = m_pCameraMngr->GetPosition();
 	vector3 newPos = center + glm::normalize(cameraPos - center) * FOLLOW_DISTANCE;
 	m_pCameraMngr->SetPositionTargetAndUpward(newPos, center, up);

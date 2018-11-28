@@ -12,6 +12,8 @@ Date: 2017/06
 
 #include "MyEntityManager.h"
 #include "MyOctant.h"
+#include "PhysicsInfo.h"
+
 
 namespace Simplex
 {
@@ -31,6 +33,10 @@ class Application
 	uint centerX;
 	uint centerY;
 	float prevDeltaMouse = 0.0f;
+	MyEntity* cueBall = nullptr;
+	MyRigidBody* cueBallRB = nullptr;
+
+	std::map<MyEntity*, PhysicsInfo> poolBallInfo;
 		
 private:
 	String m_sProgrammer = "Large HeadDesk Colliders"; //programmer
