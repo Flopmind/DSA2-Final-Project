@@ -160,6 +160,24 @@ void Application::Update(void)
 		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
 	}
 
+	std::map<MyEntity*, PhysicsInfo>::iterator outer;
+	std::map<MyEntity*, PhysicsInfo>::iterator inner;
+	for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
+	{
+		inner = outer;
+		inner++;
+		if (inner != poolBallInfo.end())
+		{
+			for (inner = inner; inner != poolBallInfo.end(); inner++)
+			{
+				if (outer->first != inner->first && outer->first->IsColliding(inner->first))
+				{
+					outer->second.Collision(inner->second);
+				}
+			}
+		}
+	}
+
 	/*vector3 vel = poolBallInfo[cueBall].GetVelocity();
 	poolBallInfo[cueBall].UpdateVelocity();
 	std::cout << "Cue Ball Velocity: " << "( "<< vel.x  << ", " << vel.y << ", " << vel.z << ")" << std::endl;
