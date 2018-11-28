@@ -1,6 +1,11 @@
 #include "MyOctant.h"
 using namespace Simplex;
 uint MyOctant::m_nCount = 0;
+
+static std::map<int, MyOctant*> OctLookUpTable;
+
+static const int MAXDEPTH = 2;
+
 //  MyOctant
 void MyOctant::Init(void)
 {
@@ -17,8 +22,10 @@ void MyOctant::Init(void)
 MyOctant::MyOctant(int a_iLim)
 {
 	Init();
+	OctLookUpTable = std::map<int, MyOctant*>();
 	m_iLim = a_iLim;
 	m_iDim = 0;
+	OctLookUpTable.insert(std::pair<int, MyOctant*>(m_iDim, this));
 	std::vector<MyEntity*> l_Entity_List = m_pEntityMngr->GetEntityList();
 	uint iEntityCount = l_Entity_List.size();
 	std::vector<vector3> v3MaxMin_list;
@@ -53,15 +60,9 @@ MyOctant::MyOctant(vector3 a_v3Center, float a_fSize)
 }
 
 void MyOctant::Subdivide()
-{
-	if (m_nLevel > 2) {
-		//if we're in too deep, set the contained entities' dimensions and back out
-		for (size_t j = 0; j < m_ContainedEnts.size(); j++)
-		{
-			m_pEntityMngr->AddDimension(m_ContainedEnts[j]->GetUniqueID(), m_iDim);
-		}
-		return;
-	}
+{	
+	//safety
+	if (m_nLevel > MAXDEPTH) return;
 
 	//make new children
 	vector3 v3Center = m_pRigidBody->GetCenterLocal();
@@ -91,6 +92,7 @@ void MyOctant::Subdivide()
 		m_pChild[i]->m_pParent = this;
 		m_pChild[i]->m_iLim = m_iLim;
 		m_pChild[i]->m_iDim = m_iDim + i;
+		OctLookUpTable.insert(std::pair<int, MyOctant*>(m_pChild[i]->m_iDim, m_pChild[i]));
 
 		//reset automation
 		iSubCollisions = 0;
@@ -114,7 +116,16 @@ void MyOctant::Subdivide()
 		//if we're over the limit, attempt to subdivide, otherwise...
 		if (iSubCollisions > m_iLim) 
 		{
-			m_pChild[i]->Subdivide();
+			if (m_nLevel > MAXDEPTH) {
+				//if we're in too deep, set the contained entities' dimensions and back out
+				for (size_t j = 0; j < m_ContainedEnts.size(); j++)
+				{
+					m_pEntityMngr->AddDimension(m_pChild[i]->m_ContainedEnts[j]->GetUniqueID(), m_pChild[i]->m_iDim);
+				}
+				return;
+			}
+			else
+				m_pChild[i]->Subdivide();
 		}
 		else 
 		{
@@ -125,6 +136,64 @@ void MyOctant::Subdivide()
 			}
 		}
 	}
+}
+
+void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
+{
+	//iterate through the entity list to check if they're still colliding with their dimensions
+	std::vector<MyEntity*> dirtyEntities = std::vector<MyEntity*>();
+	//iterating through the dim dictionary (map)
+	for (auto const&x : m_pEntityMngr->m_DimMap)
+	{
+		for (size_t i = 0; i < x.second.size(); i++)
+		{
+			if (!x.second[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody)) //if the entity is not colliding with the octant it's supposedly a part of
+			{
+				dirtyEntities.push_back(x.second[i]);
+			}
+		}
+	}
+
+	// clean dirty entities by adding them to the dimensions they're actually a part of
+	std::map<int, std::vector<MyEntity*>> dirtyDims = std::map<int, std::vector<MyEntity*>>();
+	for (size_t i = 0; i < dirtyEntities.size(); i++)
+	{
+		for (const auto&x : m_pEntityMngr->m_DimMap) 
+		{
+			if (!dirtyEntities[i]->IsInDimension(x.first)) //if the dirty entity is not in this dimension, check it
+			{
+				if (dirtyEntities[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody)) 
+				{
+					//add the entity to the dimension
+					m_pEntityMngr->AddDimension(dirtyEntities[i]->GetUniqueID(), x.first);
+					OctLookUpTable[x.first]->m_ContainedEnts.push_back(dirtyEntities[i]); //the amount of quote-enquote cache invalidation that could happen with this many lookup tables and unsynchronized data might super blow, who knows
+
+					dirtyDims.insert(x);
+				}
+			}
+		}
+		//clean the dimensions that need cleaning
+		for (const auto&x : dirtyDims)
+		{
+			if (m_pEntityMngr->m_DimMap[x.first].size() > OctLookUpTable[x.first]->m_iLim && OctLookUpTable[x.first]->m_nLevel < MAXDEPTH) //if the dimension is too full, subdivide
+			{
+				//destroy the dimension
+				for (size_t j = 0; j < m_pEntityMngr->m_DimMap[x.first].size(); j++)
+				{
+					m_pEntityMngr->m_DimMap[x.first][j]->RemoveDimension(x.first);//i think i might be in indexer hell
+				}
+				//std::vector<int, std::vector<MyEntity*>>::iterator it = 
+
+				//and make the worlds anew
+
+				//OctLookUpTable[x.first]->Subdivide();
+
+				m_pEntityMngr->m_DimMap.erase(x.first);
+			}
+		}
+	}
+
+
 }
 
 void MyOctant::Swap(MyOctant& other)

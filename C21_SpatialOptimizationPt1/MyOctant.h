@@ -31,6 +31,8 @@ public:
 	void Display(void);
 	void IsColliding(void);
 	void Subdivide();
+	void Update();
+
 	MyOctant(vector3 a_v3Center, float a_fSize);
 	/*
 	Usage: Constructor

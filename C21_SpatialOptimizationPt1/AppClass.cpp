@@ -111,7 +111,7 @@ void Application::InitVariables(void)
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	m_pEntityMngr->Update();
-	m_pRoot = new MyOctant(6);
+	m_pRoot = new MyOctant(3);
 
 	// Initialize the position of the pointer to the middle of the screen
 	centerX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;
@@ -126,6 +126,9 @@ void Application::Update(void)
 {
 	//Update the system so it knows how much time has passed since the last call
 	m_pSystem->Update();
+
+	//update the octree
+	m_pRoot->Update();
 
 	//Is the ArcBall active?
 	ArcBall();

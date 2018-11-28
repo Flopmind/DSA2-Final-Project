@@ -177,8 +177,6 @@ MyEntityManager::~MyEntityManager(){Release();};
 // other methods
 void Simplex::MyEntityManager::Update(void)
 {
-	//TODO: change how the collisions are handled here, should be iterating through a member list of lists representing the dimensions to call collisions
-
 	//Clear all collisions
 	for (uint i = 0; i < m_uEntityCount; i++)
 	{
@@ -318,6 +316,9 @@ void Simplex::MyEntityManager::AddDimension(uint a_uIndex, uint a_uDimension)
 		m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
 		m_DimMap[a_uDimension].push_back(m_EntityList[a_uIndex]);
 	}
+
+	//let the track its dimensions too
+	m_EntityList[a_uIndex]->AddDimension(a_uDimension);
 }
 void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimension)
 {
@@ -334,7 +335,9 @@ void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimensio
 			m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
 			m_DimMap[a_uDimension].push_back(pTemp);
 		}
+		pTemp->AddDimension(a_uDimension);
 	}
+
 }
 void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 {
@@ -353,6 +356,7 @@ void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 			m_DimMap[a_uDimension].erase(it);
 	}
 
+	m_EntityList[a_uIndex]->RemoveDimension(a_uDimension);
 }
 void Simplex::MyEntityManager::RemoveDimension(String a_sUniqueID, uint a_uDimension)
 {
@@ -367,6 +371,7 @@ void Simplex::MyEntityManager::RemoveDimension(String a_sUniqueID, uint a_uDimen
 			if (it != m_DimMap[a_uDimension].end())
 				m_DimMap[a_uDimension].erase(it);
 		}
+		pTemp->RemoveDimension(a_uDimension);
 	}
 }
 void Simplex::MyEntityManager::ClearDimensionSet(uint a_uIndex)
