@@ -40,7 +40,7 @@ void Application::InitVariables(void)
 
 	for (int i = 1; i < 9; i++)
 	{
-		Simple:String name = "Models\\";
+		Simplex::String name = "Models\\";
 		name += std::to_string(i);
 		name += "Ball.obj";
 		m_pEntityMngr->AddEntity(name);
