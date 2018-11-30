@@ -10,7 +10,19 @@ void Simplex::PhysicsInfo::ApplyForce(vector3 force)
 void Simplex::PhysicsInfo::UpdateVelocity()
 {
 	velocity += acceleration;
-
+	if (center.x + position.x > limits.x || center.x + position.x < -limits.x)
+	{
+		velocity.x *= -1;
+	}
+	if (center.y + position.y > limits.y || center.y + position.y < -limits.y)
+	{
+		velocity.y *= -1;
+	}
+	if (center.z + position.z > limits.z || center.z + position.z < -limits.z)
+	{
+		velocity.z *= -1;
+	}
+	position += velocity;
 	if (acceleration == vector3(0.0f) && velocity.length() < frictionMagnitude)
 	{
 		velocity = vector3(0.0f);
@@ -62,11 +74,14 @@ vector3 Simplex::PhysicsInfo::GetVelocity()
 	return velocity;
 }
 
-PhysicsInfo::PhysicsInfo(float mss)
+PhysicsInfo::PhysicsInfo(float mss, vector3 pos, vector3 cent, vector3 limit)
 {
 	velocity = vector3();
 	acceleration = vector3();
 	mass = mss;
+	position = pos;
+	center = cent;
+	limits = limit;
 }
 
 

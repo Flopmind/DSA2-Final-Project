@@ -12,6 +12,8 @@ namespace Simplex
 		vector3 position;
 		vector3 velocity;
 		vector3 acceleration;
+		vector3 center;
+		vector3 limits;
 		float mass;
 		const float MAX_SPEED = 1.0f;
 		float frictionMagnitude;
@@ -21,7 +23,7 @@ namespace Simplex
 		void Collision(PhysicsInfo info);
 		vector3 GetVelocity();
 
-		PhysicsInfo(float mss = 1.0f);
+		PhysicsInfo(float mss = 1.0f, vector3 pos = vector3(0.0f), vector3 center = vector3(0.0f), vector3 limits = vector3(50.0f));
 		~PhysicsInfo();
 	};
 } // end namespace Simplex
