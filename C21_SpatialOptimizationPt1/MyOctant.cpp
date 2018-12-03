@@ -186,7 +186,7 @@ void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 
 				//and make the worlds anew
 
-				//OctLookUpTable[x.first]->Subdivide();
+				OctLookUpTable[x.first]->Subdivide();
 
 				m_pEntityMngr->m_DimMap.erase(x.first);
 			}
