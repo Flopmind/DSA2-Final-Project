@@ -47,7 +47,7 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(35.0f));
+		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(50.0f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
 		//m_pEntityMngr->AddDimension(-1, uIndex);
@@ -159,7 +159,8 @@ void Application::Update(void)
 		vector3 vel = (it->second).GetVelocity();
 		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
 	}
-
+	/*
+	//crappy temp collision detection
 	std::map<MyEntity*, PhysicsInfo>::iterator outer;
 	std::map<MyEntity*, PhysicsInfo>::iterator inner;
 	for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
@@ -177,6 +178,7 @@ void Application::Update(void)
 			}
 		}
 	}
+	*/
 
 	/*vector3 vel = poolBallInfo[cueBall].GetVelocity();
 	poolBallInfo[cueBall].UpdateVelocity();

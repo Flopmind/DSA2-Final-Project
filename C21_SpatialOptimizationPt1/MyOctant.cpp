@@ -91,7 +91,7 @@ void MyOctant::Subdivide()
 		m_pChild[i]->m_nLevel = m_nLevel + 1;
 		m_pChild[i]->m_pParent = this;
 		m_pChild[i]->m_iLim = m_iLim;
-		m_pChild[i]->m_iDim = m_iDim + i;
+		m_pChild[i]->m_iDim = (8 * m_iDim) + i + 1;
 		OctLookUpTable.insert(std::pair<int, MyOctant*>(m_pChild[i]->m_iDim, m_pChild[i]));
 
 		//reset automation
@@ -116,7 +116,8 @@ void MyOctant::Subdivide()
 		//if we're over the limit, attempt to subdivide, otherwise...
 		if (iSubCollisions > m_iLim) 
 		{
-			if (m_nLevel > MAXDEPTH) {
+			if (m_nLevel > MAXDEPTH)
+			{
 				//if we're in too deep, set the contained entities' dimensions and back out
 				for (size_t j = 0; j < m_ContainedEnts.size(); j++)
 				{

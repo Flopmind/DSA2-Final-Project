@@ -10,6 +10,7 @@ void Simplex::PhysicsInfo::ApplyForce(vector3 force)
 void Simplex::PhysicsInfo::UpdateVelocity()
 {
 	velocity += acceleration;
+	acceleration = vector3(0.0f);
 	if (center.x + position.x > limits.x || center.x + position.x < -limits.x)
 	{
 		velocity.x *= -1;
@@ -82,7 +83,7 @@ PhysicsInfo::PhysicsInfo(float mss, vector3 pos, vector3 cent, vector3 limit)
 	position = pos;
 	center = cent;
 	limits = limit;
-	frictionMagnitude = 5;
+	frictionMagnitude = 0;
 }
 
 
