@@ -159,14 +159,15 @@ void Application::Update(void)
 		vector3 vel = (it->second).GetVelocity();
 		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
 	}
-	/*std::map<MyEntity*, PhysicsInfo>::iterator outer;
+	std::map<MyEntity*, PhysicsInfo>::iterator outer;
 	for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
 	{
-		if (outer->first. != inner->first && outer->first->IsColliding(inner->first))
+		MyRigidBody* rig = outer->first->GetRigidBody();
+		for (uint i = 0; i < rig->m_nCollidingSetSize; ++i)
 		{
-			outer->second.Collision(inner->second);
+			// resolve collisions
 		}
-	}*/
+	}
 	/*
 	//crappy temp collision detection
 	std::map<MyEntity*, PhysicsInfo>::iterator outer;
@@ -241,4 +242,17 @@ void Application::Release(void)
 	SafeDelete(m_pRoot);
 	//release GUI
 	ShutdownGUI();
+}
+
+MyRigidBody* Application::Find(MyRigidBody rigid)
+{
+	std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
+	for (loopThrough = poolBallInfo.begin(); loopThrough != poolBallInfo.end(); loopThrough++)
+	{
+		if (rigid.IsEqual(*loopThrough->first->GetRigidBody()))
+		{
+			return loopThrough->first->GetRigidBody());
+		}
+	}
+	return nullptr;
 }
