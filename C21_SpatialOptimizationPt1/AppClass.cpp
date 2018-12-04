@@ -47,7 +47,7 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(50.0f));
+		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(37.5f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
 		//m_pEntityMngr->AddDimension(-1, uIndex);
@@ -159,15 +159,46 @@ void Application::Update(void)
 		vector3 vel = (it->second).GetVelocity();
 		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
 	}
+
+
 	std::map<MyEntity*, PhysicsInfo>::iterator outer;
-	for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
+
+	for (const auto& x : poolBallInfo) 
 	{
-		MyRigidBody* rig = outer->first->GetRigidBody();
-		for (uint i = 0; i < rig->m_nCollidingSetSize; ++i)
+		//std::map<MyEntity*,PhysicsInfo>::iterator iter = std::find(x.first->GetRigidBody()->m_CollidingRBSet.begin(), x.first->GetRigidBody()->m_CollidingRBSet.end(), )
+		for (const auto& y : x.first->GetRigidBody()->m_CollidingRBSet) 
 		{
-			// resolve collisions
+			//std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
+			//loopThrough = std::find(poolBallInfo.begin(), poolBallInfo.end(), );
+			//std::map<MyEntity*, PhysicsInfo>::iterator collideIt = poolBallInfo.find(y);
+			PhysicsInfo collideInfo = Find(y);
+			if (collideInfo.mass != 999)
+			{
+
+				outer->second.Collision(collideInfo);
+			}
 		}
 	}
+	//for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
+	//{
+	//	MyRigidBody* rig = outer->first->GetRigidBody();
+	//	std::set<MyRigidBody*>::iterator it;
+	//	for (it = rig->m_CollidingRBSet.begin(); it != rig->m_CollidingRBSet.end(); ++it)
+	//	{
+	//		// resolve collisions
+	//		std::cout << "KILL ME" << std::endl;
+	//		PhysicsInfo collideInfo = Find(*it);
+	//		if (collideInfo != NULL)
+	//		{
+
+	//			outer->second.Collision(collideInfo);
+	//		}
+	//	}/*
+	//	for (uint i = 0; i < rig->m_nCollidingSetSize; ++i)
+	//	{
+	//		
+	//	}*/
+	//}
 	/*
 	//crappy temp collision detection
 	std::map<MyEntity*, PhysicsInfo>::iterator outer;
@@ -244,15 +275,16 @@ void Application::Release(void)
 	ShutdownGUI();
 }
 
-MyRigidBody* Application::Find(MyRigidBody rigid)
+PhysicsInfo Application::Find(MyRigidBody* rigid)
 {
 	std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
+	loopThrough = std::find(poolBallInfo.begin(),poolBallInfo.end(), loopThrough->first->GetRigidBody());
 	for (loopThrough = poolBallInfo.begin(); loopThrough != poolBallInfo.end(); loopThrough++)
 	{
-		if (rigid.IsEqual(*loopThrough->first->GetRigidBody()))
+		if (rigid->IsEqual(*loopThrough->first->GetRigidBody()))
 		{
-			return loopThrough->first->GetRigidBody());
+			return loopThrough->second;
 		}
 	}
-	return nullptr;
+	return PhysicsInfo(999);
 }
