@@ -47,7 +47,7 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(50.0f));
+		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
 		//m_pEntityMngr->AddDimension(-1, uIndex);
@@ -117,7 +117,7 @@ void Application::InitVariables(void)
 
 	cueBall = m_pEntityMngr->GetEntity(-1);
 	cueBallRB = cueBall->GetRigidBody();
-	PhysicsInfo info = PhysicsInfo(1.0f);
+	PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
 	poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(cueBall, info));
 
 

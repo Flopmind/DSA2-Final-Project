@@ -249,7 +249,11 @@ void Simplex::MyOctant::RemoveEntity(MyEntity * toRemove)
 	String i = toRemove->GetUniqueID();
 	for (const auto&x : toRemove->m_DimensionList) 
 	{
+		//cleaning the entity from all the various registries it exists within
 		m_pEntityMngr->RemoveDimension(i, x);
+		std::vector<MyEntity*>::iterator it = std::find(OctLookUpTable[x]->m_ContainedEnts.begin(), OctLookUpTable[x]->m_ContainedEnts.end(), toRemove);
+		assert(it != OctLookUpTable[x]->m_ContainedEnts.end());//safety
+		OctLookUpTable[x]->m_ContainedEnts.erase(it);
 	}
 }
 
