@@ -9,6 +9,7 @@ namespace Simplex
 	class PhysicsInfo
 	{
 	vector3 normalize(const vector3 &v);
+	float magnitude(const vector3 &v);
 	public:
 		vector3 position;
 		vector3 velocity;
@@ -16,7 +17,7 @@ namespace Simplex
 		vector3 center;
 		vector3 limits;
 		float mass;
-		const float MAX_SPEED = 1.0f;
+		const float MAX_SPEED = 50.0f;
 		float frictionMagnitude;
 
 		void ApplyForce(vector3 force);

@@ -159,6 +159,14 @@ void Application::Update(void)
 		vector3 vel = (it->second).GetVelocity();
 		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
 	}
+	/*std::map<MyEntity*, PhysicsInfo>::iterator outer;
+	for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
+	{
+		if (outer->first. != inner->first && outer->first->IsColliding(inner->first))
+		{
+			outer->second.Collision(inner->second);
+		}
+	}*/
 	/*
 	//crappy temp collision detection
 	std::map<MyEntity*, PhysicsInfo>::iterator outer;
