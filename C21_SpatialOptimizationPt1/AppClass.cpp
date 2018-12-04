@@ -7,8 +7,8 @@ void Application::InitVariables(void)
 
 	//Set the position and target of the camera
 	m_pCameraMngr->SetPositionTargetAndUpward(
-		vector3(0.0f, 0.0f, 100.0f), //Position
-		vector3(0.0f, 0.0f, 99.0f),	//Target
+		initialCameraPos, //Position
+		initialCameraTar,	//Target
 		AXIS_Y);					//Up
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
@@ -150,6 +150,8 @@ void Application::Update(void)
 	// get the force with which to hit the cue ball
 	GetCueForce();
 
+	if (cameraLerping) LerpCameraToCenter();
+
 	std::map<MyEntity*, PhysicsInfo>::iterator it;
 
 	// update the velocity and move all the balls
@@ -159,6 +161,12 @@ void Application::Update(void)
 		vector3 vel = (it->second).GetVelocity();
 		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
 	}
+
+	vector3 pos = m_pCameraMngr->GetPosition();
+	vector3 tar = m_pCameraMngr->GetForward();
+	std::cout << "Camera Position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")\n";
+	std::cout << "Camera Target: (" << tar.x << ", " << tar.y << ", " << tar.z << ")\n";
+
 	/*
 	//crappy temp collision detection
 	std::map<MyEntity*, PhysicsInfo>::iterator outer;

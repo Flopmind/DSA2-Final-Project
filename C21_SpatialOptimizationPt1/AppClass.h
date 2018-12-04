@@ -23,13 +23,21 @@ class Application
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	MyOctant* m_pRoot = nullptr;
 
+	// for lerping camera
+	vector3 initialCameraPos = vector3(25.8f, 27.0f, 102.9f);
+	vector3 initialCameraTar = vector3(-23.0f, -29.0f, -93.0f);
+	float progress = 0.0f;
+	float lerpSpeed = 0.001f;
+	bool cameraLerping = false;
+
 	// for hitting cue ball
 	bool followCue = false;
-	float cueRotation = 0.0f;
-	float cueCameraHeight = 0.0f;
+	float rotationX = 0.0f;
+	float rotationY = 0.0f;
 	const float FOLLOW_DISTANCE = 10.0f;
 	float cueForce = 0.0f;
 	bool hittingCue = false;
+	vector3 cameraStartPos = vector3();
 	uint centerX;
 	uint centerY;
 	float prevDeltaMouse = 0.0f;
@@ -330,7 +338,12 @@ private:
 
 	void FocusOnCue(MyEntity* cueBall);
 
-	void GetCueForce();
+	void GetCueForce(void);
+
+	void LerpCameraToCenter(void);
+
+	bool BallsMoving(void);
+
 
 #pragma endregion
 
