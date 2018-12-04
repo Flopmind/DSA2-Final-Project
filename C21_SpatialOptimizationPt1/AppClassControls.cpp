@@ -103,9 +103,6 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 			FocusOnCue(cueBall);
 		}
 		break;
-	case sf::Keyboard::R:
-		RemoveBall(m_pEntityMngr->GetEntity(-1));
-		break;
 	}
 	
 	//gui

@@ -261,16 +261,12 @@ MyRigidBody* Application::Find(MyRigidBody rigid)
 
 void Simplex::Application::RemoveBall(MyEntity* ball)
 {
-	
 	// remove ball's physics info from map
 	poolBallInfo.erase(ball);
 
 	// remove ball from octree
 	m_pRoot->RemoveEntity(ball);
 
-	// remove ball from entity manager
+	// remove ball from entity manager (also deletes ball pointer)
 	m_pEntityMngr->RemoveEntity(ball->GetUniqueID());
-
-	// delete pointer
-	//SafeDelete(ball);
 }
