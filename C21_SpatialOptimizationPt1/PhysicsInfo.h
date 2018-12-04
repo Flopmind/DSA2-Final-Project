@@ -8,6 +8,7 @@ namespace Simplex
 {
 	class PhysicsInfo
 	{
+	vector3 normalize(const vector3 &v);
 	public:
 		vector3 position;
 		vector3 velocity;

@@ -23,21 +23,29 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 	{
 		velocity.z *= -1;
 	}
-	position += velocity;
-	if (acceleration == vector3(0.0f) && velocity.length() < frictionMagnitude)
+	if (velocity.length() > 0)
 	{
-		velocity = vector3(0.0f);
+		vector3 frictionForce = (-1 * normalize(velocity));
+		std::cout << "fric - " << (frictionForce).length() << ";" << std::endl;
+		std::cout << "vel - " << (velocity).length() << ";" << std::endl;
+		std::cout << "net - " << (velocity - frictionForce).length() << ";" << std::endl;
+		std::cout << "net2 - " << (velocity.length())  - (frictionForce).length() << ";" << std::endl;
+		if (frictionForce.length() > velocity.length())
+		{
+			velocity = vector3(0.0f);
+		}
+		else
+		{
+			velocity -= frictionForce;
+			//std::cout << frictionForce.length() << ";" << std::endl;
+		}
 	}
-	else if (acceleration == vector3(0.0f) && velocity.length() > frictionMagnitude)
-	{
-		velocity += frictionMagnitude * -1 * glm::normalize(velocity);
-	}
-
 	// clamp magnitude of velocity to max speed
 	if (glm::length(velocity) > MAX_SPEED)
 	{
 		velocity = glm::normalize(velocity) * MAX_SPEED;
 	}
+	position += velocity;
 }
 
 
@@ -78,15 +86,21 @@ vector3 Simplex::PhysicsInfo::GetVelocity()
 PhysicsInfo::PhysicsInfo(float mss, vector3 pos, vector3 cent, vector3 limit)
 {
 	velocity = vector3(1);
-	acceleration = vector3();
+	acceleration = vector3(0.0f);
 	mass = mss;
 	position = pos;
 	center = cent;
 	limits = limit;
-	frictionMagnitude = 0;
+	frictionMagnitude = 2;
 }
 
 
 PhysicsInfo::~PhysicsInfo()
 {
+}
+
+vector3 PhysicsInfo::normalize(const vector3 &v)
+{
+	float length_of_v = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+	return vector3(v.x / length_of_v, v.y / length_of_v, v.z / length_of_v);
 }
