@@ -26,10 +26,10 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 	if (magnitude(velocity) > 0)
 	{
 		vector3 frictionForce = (-frictionMagnitude * glm::normalize(velocity));
-		std::cout << "fric - " << magnitude(frictionForce) << ";" << std::endl;
-		std::cout << "vel - " << magnitude(velocity) << ";" << std::endl;
-		std::cout << "net - " << magnitude(velocity - frictionForce) << ";" << std::endl;
-		std::cout << "net2 - " << magnitude(velocity)  - magnitude(frictionForce) << ";" << std::endl;
+		//std::cout << "fric - " << magnitude(frictionForce) << ";" << std::endl;
+		//std::cout << "vel - " << magnitude(velocity) << ";" << std::endl;
+		//std::cout << "net - " << magnitude(velocity - frictionForce) << ";" << std::endl;
+		//std::cout << "net2 - " << magnitude(velocity)  - magnitude(frictionForce) << ";" << std::endl;
 		if (magnitude(frictionForce) > magnitude(velocity))
 		{
 			velocity = vector3(0.0f);
@@ -109,4 +109,9 @@ float PhysicsInfo::magnitude(const vector3 &v)
 {
 	float length_of_v = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
 	return length_of_v;
+}
+
+float PhysicsInfo::GetMagnitude()
+{
+	return magnitude(velocity);
 }

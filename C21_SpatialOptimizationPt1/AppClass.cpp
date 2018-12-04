@@ -163,17 +163,17 @@ void Application::Update(void)
 	}
 
 
-	std::map<MyEntity*, PhysicsInfo>::iterator outer;
+	//std::map<MyEntity*, PhysicsInfo>::iterator outer;
 
-	for (const auto& x : poolBallInfo) 
+	for (auto& x : poolBallInfo) 
 	{
 		//std::map<MyEntity*,PhysicsInfo>::iterator iter = std::find(x.first->GetRigidBody()->m_CollidingRBSet.begin(), x.first->GetRigidBody()->m_CollidingRBSet.end(), )
 		for (const auto& y : x.first->GetRigidBody()->m_CollidingRBSet) 
 		{
 			PhysicsInfo collideInfo = Find(y);
-			if (collideInfo.mass != 999)
+			if (x.second.GetMagnitude() > 0.0f && collideInfo.mass != 999.0f)
 			{
-				outer->second.Collision(collideInfo);
+				poolBallInfo[x.first].Collision(collideInfo);
 			}
 		}
 	}
@@ -231,7 +231,7 @@ void Application::Release(void)
 PhysicsInfo Application::Find(MyRigidBody* rigid)
 {
 	std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
-	loopThrough = std::find(poolBallInfo.begin(), poolBallInfo.end(), loopThrough->first->GetRigidBody());
+	//loopThrough = std::find(poolBallInfo.begin(), poolBallInfo.end(), loopThrough->first->GetRigidBody());
 	for (loopThrough = poolBallInfo.begin(); loopThrough != poolBallInfo.end(); loopThrough++)
 	{
 		if (rigid->IsEqual(*loopThrough->first->GetRigidBody()))

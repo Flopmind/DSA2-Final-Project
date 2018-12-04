@@ -24,6 +24,7 @@ namespace Simplex
 		void UpdateVelocity();
 		void Collision(PhysicsInfo info);
 		vector3 GetVelocity();
+		float GetMagnitude();
 
 		PhysicsInfo(float mss = 1.0f, vector3 pos = vector3(0.0f), vector3 center = vector3(0.0f), vector3 limits = vector3(50.0f));
 		~PhysicsInfo();
