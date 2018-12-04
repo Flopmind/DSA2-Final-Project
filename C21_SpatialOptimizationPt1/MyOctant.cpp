@@ -4,7 +4,8 @@ uint MyOctant::m_nCount = 0;
 
 static std::map<int, MyOctant*> OctLookUpTable;
 
-static const int MAXDEPTH = 2;
+static const int MAXDEPTH = 1;
+static int dimCounter = -1;
 
 //  MyOctant
 void MyOctant::Init(void)
@@ -44,8 +45,8 @@ MyOctant::MyOctant(int a_iLim)
 
 	m_pRigidBody = new MyRigidBody(v3MaxMin_list);
 	m_pRigidBody->MakeCubic();
-	m_iID = m_nCount;
 	Subdivide();
+	dimCounter++;
 }
 
 MyOctant::MyOctant(vector3 a_v3Center, float a_fSize)
@@ -56,13 +57,21 @@ MyOctant::MyOctant(vector3 a_v3Center, float a_fSize)
 	v3MaxMin_list.push_back(a_v3Center + vector3(a_fSize));
 	m_pRigidBody = new MyRigidBody(v3MaxMin_list);
 	m_nCount++;
-	m_iID = m_nCount;
+	dimCounter++;
 }
 
 void MyOctant::Subdivide()
 {	
 	//safety
 	if (m_nLevel > MAXDEPTH) return;
+
+	if (m_pChild[0]) //if children are already present, destroy them
+	{
+		for (size_t i = 0; i < 8; i++)
+		{
+			m_pChild[i]->Release();
+		}
+	}
 
 	//make new children
 	vector3 v3Center = m_pRigidBody->GetCenterLocal();
@@ -91,8 +100,9 @@ void MyOctant::Subdivide()
 		m_pChild[i]->m_nLevel = m_nLevel + 1;
 		m_pChild[i]->m_pParent = this;
 		m_pChild[i]->m_iLim = m_iLim;
-		m_pChild[i]->m_iDim = (8 * m_iDim) + i + 1;
-		OctLookUpTable.insert(std::pair<int, MyOctant*>(m_pChild[i]->m_iDim, m_pChild[i]));
+		m_pChild[i]->m_iDim = dimCounter + i;
+		OctLookUpTable.insert_or_assign(m_pChild[i]->m_iDim, m_pChild[i]);
+		
 
 		//reset automation
 		iSubCollisions = 0;
@@ -173,7 +183,7 @@ void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 				}
 			}
 		}
-		//clean the dimensions that need cleaning
+		//clean the dimensions that need subdivision
 		for (const auto&x : dirtyDims)
 		{
 			if (m_pEntityMngr->m_DimMap[x.first].size() > OctLookUpTable[x.first]->m_iLim && OctLookUpTable[x.first]->m_nLevel < MAXDEPTH) //if the dimension is too full, subdivide
@@ -181,15 +191,14 @@ void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 				//destroy the dimension
 				for (size_t j = 0; j < m_pEntityMngr->m_DimMap[x.first].size(); j++)
 				{
-					m_pEntityMngr->m_DimMap[x.first][j]->RemoveDimension(x.first);//i think i might be in indexer hell
+					m_pEntityMngr->RemoveDimension(m_pEntityMngr->m_DimMap[x.first][j]->GetUniqueID(), x.first);//i think i might be in indexer hell
 				}
 				//std::vector<int, std::vector<MyEntity*>>::iterator it = 
 
 				//and make the worlds anew
-
-				OctLookUpTable[x.first]->Subdivide();
-
+				
 				m_pEntityMngr->m_DimMap.erase(x.first);
+				OctLookUpTable[x.first]->Subdivide();
 			}
 		}
 	}
@@ -204,7 +213,17 @@ void MyOctant::Swap(MyOctant& other)
 }
 void MyOctant::Release(void)
 {
-	m_lData.clear();
+	//m_lData.clear(); 
+		
+	if (m_pChild[0])//if children exist, delete those too
+	{
+		for (size_t i = 0; i < 8; i++)
+		{
+			//assert(m_pEntityMngr->m_DimMap.count(m_pChild[i]->m_iDim) != 0);
+			OctLookUpTable.erase(m_pChild[i]->m_iDim);
+			delete m_pChild[i];
+		}
+	}
 }
 void Simplex::MyOctant::Display(void)
 {
@@ -216,19 +235,7 @@ void Simplex::MyOctant::Display(void)
 	}
 	//m_pMeshMngr->AddWireCubeToRenderList(glm::scale(vector3(70)), C_BLUE);
 }
-void Simplex::MyOctant::IsColliding(void)
-{
-	std::vector<MyEntity*> l_Entity_List = m_pEntityMngr->GetEntityList();
-	uint iEntityCount = l_Entity_List.size();
-	for (uint i = 0; i < iEntityCount; ++i)
-	{
-		MyRigidBody* pRB = l_Entity_List[i]->GetRigidBody();
-		if (pRB->IsColliding(m_pRigidBody))
-		{
-			l_Entity_List[i]->AddDimension(m_iID);
-		}
-	}
-}
+
 MyOctant::MyOctant(MyOctant const& other)
 {
 	m_nData = other.m_nData;

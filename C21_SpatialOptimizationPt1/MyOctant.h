@@ -15,11 +15,11 @@ namespace Simplex
 class MyOctant
 {
 	int m_nData = 0; //Number of elements in the list of elements
-	std::vector<int> m_lData; //list of elements
+	std::vector<int> m_lData; //list of elements. UNUSED, I'M JUST LAZY
 	MeshManager* m_pMeshMngr = nullptr; //Pointer to Mesh manager
 	MyEntityManager* m_pEntityMngr = nullptr;
 	MyRigidBody* m_pRigidBody = nullptr;
-	uint m_iID = 0;
+	//uint m_iID = 0;
 	static uint m_nCount;
 	MyOctant* m_pParent = nullptr;
 	MyOctant* m_pChild[8];
@@ -29,7 +29,6 @@ class MyOctant
 public:
 	std::vector<MyEntity*> m_ContainedEnts;
 	void Display(void);
-	void IsColliding(void);
 	void Subdivide();
 	void Update();
 
