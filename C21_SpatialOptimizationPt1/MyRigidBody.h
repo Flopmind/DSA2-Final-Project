@@ -229,6 +229,7 @@ public:
 	Output: ---
 	*/
 	void SetModelMatrix(matrix4 a_m4ModelMatrix);
+	bool IsEqual(MyRigidBody rigid);
 #pragma endregion
 	
 private:

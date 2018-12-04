@@ -165,7 +165,7 @@ void Application::Update(void)
 		MyRigidBody* rig = outer->first->GetRigidBody();
 		for (uint i = 0; i < rig->m_nCollidingSetSize; ++i)
 		{
-			
+			// resolve collisions
 		}
 	}
 	/*
@@ -242,4 +242,17 @@ void Application::Release(void)
 	SafeDelete(m_pRoot);
 	//release GUI
 	ShutdownGUI();
+}
+
+MyRigidBody* Application::Find(MyRigidBody rigid)
+{
+	std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
+	for (loopThrough = poolBallInfo.begin(); loopThrough != poolBallInfo.end(); loopThrough++)
+	{
+		if (rigid.IsEqual(*loopThrough->first->GetRigidBody()))
+		{
+			return loopThrough->first->GetRigidBody());
+		}
+	}
+	return nullptr;
 }

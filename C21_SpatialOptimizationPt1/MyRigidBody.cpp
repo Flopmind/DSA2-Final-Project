@@ -333,3 +333,11 @@ void MyRigidBody::AddToRenderList(void)
 			m_pMeshMngr->AddWireCubeToRenderList(glm::translate(m_v3CenterG) * glm::scale(m_v3ARBBSize), C_YELLOW);
 	}
 }
+
+bool MyRigidBody::IsEqual(MyRigidBody rigid)
+{
+	return (GetHalfWidth() == rigid.GetHalfWidth() &&
+		GetModelMatrix() == rigid.GetModelMatrix() &&
+		GetCenterLocal() == rigid.GetCenterLocal() &&
+		GetCenterGlobal() == rigid.GetCenterGlobal());
+}
