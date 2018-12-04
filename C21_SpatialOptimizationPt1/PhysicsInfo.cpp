@@ -52,6 +52,10 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
 {
 	vector3 oldVel = velocity;
+	if (magnitude(oldVel) == 0.0f)
+	{
+		return;
+	}
 	vector3 nextVelDirect = glm::normalize(info.position - position);
 
 
