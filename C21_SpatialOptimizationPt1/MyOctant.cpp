@@ -207,6 +207,53 @@ void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 
 }
 
+void Simplex::MyOctant::AddEntity(MyEntity * toAdd)
+{
+std::map<int, std::vector<MyEntity*>> dirtyDims = std::map<int, std::vector<MyEntity*>>();
+
+	for (const auto&x : m_pEntityMngr->m_DimMap)
+	{
+		if (toAdd->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody))
+		{
+			//add the entity to the dimension
+			m_pEntityMngr->AddDimension(toAdd->GetUniqueID(), x.first);
+			OctLookUpTable[x.first]->m_ContainedEnts.push_back(toAdd); //the amount of quote-enquote cache invalidation that could happen with this many lookup tables and unsynchronized data might super blow, who knows
+
+			dirtyDims.insert(x);
+		}
+		
+	}
+	//clean the dimensions that need subdivision
+	for (const auto&x : dirtyDims)
+	{
+		if (m_pEntityMngr->m_DimMap[x.first].size() > OctLookUpTable[x.first]->m_iLim && OctLookUpTable[x.first]->m_nLevel < MAXDEPTH) //if the dimension is too full, subdivide
+		{
+			//destroy the dimension
+			for (size_t j = 0; j < m_pEntityMngr->m_DimMap[x.first].size(); j++)
+			{
+				m_pEntityMngr->RemoveDimension(m_pEntityMngr->m_DimMap[x.first][j]->GetUniqueID(), x.first);//i think i might be in indexer hell
+			}
+			//std::vector<int, std::vector<MyEntity*>>::iterator it = 
+
+			//and make the worlds anew
+
+			m_pEntityMngr->m_DimMap.erase(x.first);
+			OctLookUpTable[x.first]->Subdivide();
+		}
+	}
+	
+}
+
+void Simplex::MyOctant::RemoveEntity(MyEntity * toRemove)
+{
+	String i = toRemove->GetUniqueID();
+	for (const auto&x : toRemove->m_DimensionList) 
+	{
+		m_pEntityMngr->RemoveDimension(i, x);
+	}
+	
+}
+
 void MyOctant::Swap(MyOctant& other)
 {
 	std::swap(m_nData, other.m_nData);

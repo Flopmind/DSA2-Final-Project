@@ -31,6 +31,8 @@ public:
 	void Display(void);
 	void Subdivide();
 	void Update();
+	void AddEntity(MyEntity*);
+	void RemoveEntity(MyEntity*);
 
 	MyOctant(vector3 a_v3Center, float a_fSize);
 	/*
