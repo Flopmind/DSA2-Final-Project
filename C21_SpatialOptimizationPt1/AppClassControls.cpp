@@ -49,8 +49,8 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 		{
 			vector3 position = (cueBallRB->GetCenterGlobal());
 			vector3 direction = glm::normalize(position - m_pCameraMngr->GetPosition());
-			cueForce = MapValue(cueForce, 0.0f, 400.0f, 0.0f, 5.0f); // first range is how much drawing the mouse back impacts the force
-																	   // second range is possible forces (from 0 to max force)
+			cueForce = MapValue(cueForce, 0.0f, 400.0f, 0.0f, maxCueForce); // first range is how much drawing the mouse back impacts the force
+																	          // second range is possible forces (from 0 to max force)
 			poolBallInfo[cueBall].ApplyForce(direction * cueForce);
 			hittingCue = false;
 			followCue = false;
@@ -415,7 +415,7 @@ void Simplex::Application::LerpCameraToCenter(void)
 
 	m_pCameraMngr->SetPositionTargetAndUpward(newPos, newTarget, AXIS_Y);
 
-	if (progress >= 1.0f)
+	if (progress >= 0.1f)
 	{
 		progress = 0.0f;
 		cameraLerping = false;

@@ -35,6 +35,7 @@ class Application
 	float rotationX = 0.0f;
 	float rotationY = 0.0f;
 	const float FOLLOW_DISTANCE = 10.0f;
+	float maxCueForce = 5.0f;
 	float cueForce = 0.0f;
 	bool hittingCue = false;
 	vector3 cameraStartPos = vector3();

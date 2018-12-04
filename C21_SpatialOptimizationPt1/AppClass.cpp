@@ -253,7 +253,7 @@ MyRigidBody* Application::Find(MyRigidBody rigid)
 	{
 		if (rigid.IsEqual(*loopThrough->first->GetRigidBody()))
 		{
-			return loopThrough->first->GetRigidBody());
+			return loopThrough->first->GetRigidBody();
 		}
 	}
 	return nullptr;
