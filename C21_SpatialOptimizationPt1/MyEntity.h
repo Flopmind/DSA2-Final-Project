@@ -18,8 +18,6 @@ class MyEntity
 	String m_sUniqueID = ""; //Unique identifier name
 
 	uint m_uMainDimension = 0; //which is the dimension this object lives at
-	uint m_nDimensionCount = 0; //tells how many dimensions this entity lives in
-	std::vector<uint> m_DimensionList; //Dimensions on which this entity is located
 
 	Model* m_pModel = nullptr; //Model associated with this MyEntity
 	MyRigidBody* m_pRigidBody = nullptr; //Rigid Body associated with this MyEntity
@@ -30,6 +28,8 @@ class MyEntity
 	static std::map<String, MyEntity*> m_IDMap; //a map of the unique ID's
 
 public:
+	std::vector<uint> m_DimensionList; //Dimensions on which this entity is located	
+	uint m_nDimensionCount = 0; //tells how many dimensions this entity lives in
 	/*
 	Usage: Constructor that specifies the name attached to the MyEntity
 	Arguments:

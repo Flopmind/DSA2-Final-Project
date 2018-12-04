@@ -49,10 +49,12 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 		{
 			vector3 position = (cueBallRB->GetCenterGlobal());
 			vector3 direction = glm::normalize(position - m_pCameraMngr->GetPosition());
-			cueForce = MapValue(cueForce, 0.0f, 800.0f, 0.0f, 0.045f); // first range is how much drawing the mouse back impacts the force
-																	   // second range is possible forces (from 0 to max force)
+			cueForce = MapValue(cueForce, 0.0f, 400.0f, 0.0f, maxCueForce); // first range is how much drawing the mouse back impacts the force
+																	          // second range is possible forces (from 0 to max force)
 			poolBallInfo[cueBall].ApplyForce(direction * cueForce);
 			hittingCue = false;
+			followCue = false;
+			cameraLerping = true;
 			cueForce = 0;
 		}
 		break;
@@ -94,6 +96,7 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 		m_bModifier = true;
 		break;
 	case sf::Keyboard::F:
+		if (BallsMoving()) break;
 		followCue = !followCue;
 		if (followCue)
 		{
@@ -401,6 +404,43 @@ void Simplex::Application::GetCueForce()
 	prevDeltaMouse = deltaMouse;
 }
 
+void Simplex::Application::LerpCameraToCenter(void)
+{
+	progress += lerpSpeed;
+	vector3 cameraPos = m_pCameraMngr->GetPosition();
+	vector3 target = cueBallRB->GetCenterGlobal();
+
+	vector3 newPos = glm::lerp(cameraPos, initialCameraPos, progress);
+	vector3 newTarget = glm::lerp(target, initialCameraTar, progress);
+
+	m_pCameraMngr->SetPositionTargetAndUpward(newPos, newTarget, AXIS_Y);
+
+	if (progress >= 0.1f)
+	{
+		progress = 0.0f;
+		cameraLerping = false;
+	}
+}
+
+bool Simplex::Application::BallsMoving(void)
+{
+	bool moving = false;
+
+	std::map<MyEntity*, PhysicsInfo>::iterator it;
+
+	for (it = poolBallInfo.begin(); it != poolBallInfo.end(); it++)
+	{
+		vector3 vel = (it->second).GetVelocity();
+		if (glm::length(vel) > 0)
+		{
+			moving = true;
+			break;
+		}
+	}
+
+	return moving;
+}
+
 void Application::CameraRotation(float a_fSpeed)
 {
 	if (m_bFPC == false)
@@ -459,6 +499,10 @@ void Application::ProcessKeyboard(void)
 	for discreet on/off use ProcessKeyboardPressed/Released
 	*/
 #pragma region Camera Position
+
+	if (cameraLerping)
+		return;
+
 	bool bMultiplier = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 
@@ -493,22 +537,22 @@ void Application::ProcessKeyboard(void)
 		bool pressed = false;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
-			cueRotation--;
+			rotationY++;
 			pressed = true;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			cueRotation++;
+			rotationY--;
 			pressed = true;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
-			cueCameraHeight++;
+			rotationX++;
 			pressed = true;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		{
-			cueCameraHeight--;
+			rotationX--;
 			pressed = true;
 		}
 
@@ -516,12 +560,12 @@ void Application::ProcessKeyboard(void)
 		{
 			vector3 up = m_pCameraMngr->GetUpward();
 			vector3 center = cueBallRB->GetCenterGlobal();
-			vector3 cameraPos = m_pCameraMngr->GetPosition();
 
-			float x = glm::sin(glm::radians(cueRotation));
-			float y = center.y + cueCameraHeight * 0.01f;
-			float z = glm::cos(glm::radians(cueRotation));
-			vector3 newPos = center + glm::normalize(vector3(x, y, z)) * FOLLOW_DISTANCE;
+			vector3 newPos = glm::normalize(center - cameraStartPos);
+			quaternion myQuat = glm::eulerAngleXY(glm::radians(rotationX), glm::radians(rotationY));
+			newPos = newPos * myQuat;
+			newPos = newPos * FOLLOW_DISTANCE + center;
+
 			m_pCameraMngr->SetPositionTargetAndUpward(newPos, center, up);
 		}
 #pragma endregion
@@ -536,6 +580,7 @@ void Simplex::Application::FocusOnCue(MyEntity * cueBall)
 	vector3 center = cueBallRB->GetCenterGlobal();
 	vector3 cameraPos = m_pCameraMngr->GetPosition();
 	vector3 newPos = center + glm::normalize(cameraPos - center) * FOLLOW_DISTANCE;
+	cameraStartPos = newPos;
 	m_pCameraMngr->SetPositionTargetAndUpward(newPos, center, up);
 }
 

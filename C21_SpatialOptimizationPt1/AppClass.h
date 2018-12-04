@@ -23,13 +23,22 @@ class Application
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	MyOctant* m_pRoot = nullptr;
 
+	// for lerping camera
+	vector3 initialCameraPos = vector3(25.8f, 27.0f, 102.9f);
+	vector3 initialCameraTar = vector3(-23.0f, -29.0f, -93.0f);
+	float progress = 0.0f;
+	float lerpSpeed = 0.0005f;
+	bool cameraLerping = false;
+
 	// for hitting cue ball
 	bool followCue = false;
-	float cueRotation = 0.0f;
-	float cueCameraHeight = 0.0f;
+	float rotationX = 0.0f;
+	float rotationY = 0.0f;
 	const float FOLLOW_DISTANCE = 10.0f;
+	float maxCueForce = 5.0f;
 	float cueForce = 0.0f;
 	bool hittingCue = false;
+	vector3 cameraStartPos = vector3();
 	uint centerX;
 	uint centerY;
 	float prevDeltaMouse = 0.0f;
@@ -328,10 +337,37 @@ private:
 	OUTPUT: ---
 	*/
 	void NewFrame(void);
-
+	/*
+	USAGE: Focuses camera on cue ball, Allows player to hit it
+	ARGUMENTS: pointer to cue ball
+	OUTPUT: ---
+	*/
 	void FocusOnCue(MyEntity* cueBall);
+	/*
+	USAGE: Gets the force with which to hit the cue ball using user input
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
+	void GetCueForce(void);
+	/*
+	USAGE: Moves camera to initial position
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
+	void LerpCameraToCenter(void);
+	/*
+	USAGE: Returns true if a ball is moving, false otherwise
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
+	bool BallsMoving(void);
+	/*
+	USAGE: Remove a ball from the game
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
+	void RemoveBall(MyEntity* ball);
 
-	void GetCueForce();
 
 #pragma endregion
 

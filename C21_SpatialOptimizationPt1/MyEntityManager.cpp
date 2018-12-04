@@ -240,7 +240,8 @@ void Simplex::MyEntityManager::RemoveEntity(uint a_uIndex)
 	m_mEntityArray = new PEntity[m_EntityList.size()];
 	for (uint i = 0; i < m_EntityList.size(); ++i)
 	{
-		m_mEntityArray[i] = m_mEntityArray[i];
+		// m_mEntityArray[i] = m_mEntityArray[i];
+		m_mEntityArray[i] = m_EntityList[i];
 	}
 	return;
 }
@@ -248,7 +249,7 @@ void Simplex::MyEntityManager::RemoveEntity(String a_sUniqueID)
 {
 	int nIndex = GetEntityIndex(a_sUniqueID);
 	RemoveEntity((uint)nIndex);
-	SafeDelete(m_mEntityArray);
+	// SafeDelete(m_mEntityArray);
 }
 String Simplex::MyEntityManager::GetUniqueID(uint a_uIndex)
 {

@@ -7,8 +7,8 @@ void Application::InitVariables(void)
 
 	//Set the position and target of the camera
 	m_pCameraMngr->SetPositionTargetAndUpward(
-		vector3(0.0f, 0.0f, 100.0f), //Position
-		vector3(0.0f, 0.0f, 99.0f),	//Target
+		initialCameraPos, //Position
+		initialCameraTar,	//Target
 		AXIS_Y);					//Up
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
@@ -47,7 +47,7 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(37.5f));
+		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
 		//m_pEntityMngr->AddDimension(-1, uIndex);
@@ -117,7 +117,7 @@ void Application::InitVariables(void)
 
 	cueBall = m_pEntityMngr->GetEntity(-1);
 	cueBallRB = cueBall->GetRigidBody();
-	PhysicsInfo info = PhysicsInfo(1.0f);
+	PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
 	poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(cueBall, info));
 
 
@@ -149,6 +149,8 @@ void Application::Update(void)
 
 	// get the force with which to hit the cue ball
 	GetCueForce();
+
+	if (cameraLerping) LerpCameraToCenter();
 
 	std::map<MyEntity*, PhysicsInfo>::iterator it;
 
@@ -286,5 +288,17 @@ PhysicsInfo Application::Find(MyRigidBody* rigid)
 			return loopThrough->second;
 		}
 	}
-	return PhysicsInfo(999);
+	return nullptr;
+}
+
+void Simplex::Application::RemoveBall(MyEntity* ball)
+{
+	// remove ball's physics info from map
+	poolBallInfo.erase(ball);
+
+	// remove ball from octree
+	m_pRoot->RemoveEntity(ball);
+
+	// remove ball from entity manager (also deletes ball pointer)
+	m_pEntityMngr->RemoveEntity(ball->GetUniqueID());
 }
