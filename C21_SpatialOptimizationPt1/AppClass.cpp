@@ -122,7 +122,7 @@ void Application::InitVariables(void)
 
 
 	m_pEntityMngr->Update();
-	m_pRoot = new MyOctant(3);
+	m_pRoot = new MyOctant(2);
 
 	// Initialize the position of the pointer to the middle of the screen
 	centerX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;
@@ -161,12 +161,15 @@ void Application::Update(void)
 		vector3 vel = (it->second).GetVelocity();
 		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
 	}
-
-	vector3 pos = m_pCameraMngr->GetPosition();
-	vector3 tar = m_pCameraMngr->GetForward();
-	std::cout << "Camera Position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")\n";
-	std::cout << "Camera Target: (" << tar.x << ", " << tar.y << ", " << tar.z << ")\n";
-
+	std::map<MyEntity*, PhysicsInfo>::iterator outer;
+	for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
+	{
+		MyRigidBody* rig = outer->first->GetRigidBody();
+		for (uint i = 0; i < rig->m_nCollidingSetSize; ++i)
+		{
+			// resolve collisions
+		}
+	}
 	/*
 	//crappy temp collision detection
 	std::map<MyEntity*, PhysicsInfo>::iterator outer;
@@ -241,4 +244,17 @@ void Application::Release(void)
 	SafeDelete(m_pRoot);
 	//release GUI
 	ShutdownGUI();
+}
+
+MyRigidBody* Application::Find(MyRigidBody rigid)
+{
+	std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
+	for (loopThrough = poolBallInfo.begin(); loopThrough != poolBallInfo.end(); loopThrough++)
+	{
+		if (rigid.IsEqual(*loopThrough->first->GetRigidBody()))
+		{
+			return loopThrough->first->GetRigidBody());
+		}
+	}
+	return nullptr;
 }

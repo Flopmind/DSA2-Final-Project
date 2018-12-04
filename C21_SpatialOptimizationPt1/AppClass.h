@@ -91,6 +91,7 @@ public:
 	OUTPUT: ---
 	*/
 	Application();
+	MyRigidBody* Find(MyRigidBody rigid);
 	/*
 	USAGE: Initializes the window and rendering context
 	ARGUMENTS:
