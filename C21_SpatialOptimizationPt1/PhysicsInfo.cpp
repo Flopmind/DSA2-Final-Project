@@ -23,25 +23,25 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 	{
 		velocity.z *= -1;
 	}
-	if (velocity.length() > 0)
+	if (magnitude(velocity) > 0)
 	{
-		vector3 frictionForce = (-1 * normalize(velocity));
-		//std::cout << "fric - " << (frictionForce).length() << ";" << std::endl;
-		//std::cout << "vel - " << (velocity).length() << ";" << std::endl;
-		//std::cout << "net - " << (velocity - frictionForce).length() << ";" << std::endl;
-		//std::cout << "net2 - " << (velocity.length())  - (frictionForce).length() << ";" << std::endl;
-		if (frictionForce.length() > velocity.length())
+		vector3 frictionForce = (-frictionMagnitude * glm::normalize(velocity));
+		std::cout << "fric - " << magnitude(frictionForce) << ";" << std::endl;
+		std::cout << "vel - " << magnitude(velocity) << ";" << std::endl;
+		std::cout << "net - " << magnitude(velocity - frictionForce) << ";" << std::endl;
+		std::cout << "net2 - " << magnitude(velocity)  - magnitude(frictionForce) << ";" << std::endl;
+		if (magnitude(frictionForce) > magnitude(velocity))
 		{
 			velocity = vector3(0.0f);
 		}
 		else
 		{
-			velocity -= frictionForce;
+			velocity += frictionForce;
 			//std::cout << frictionForce.length() << ";" << std::endl;
 		}
 	}
 	// clamp magnitude of velocity to max speed
-	if (glm::length(velocity) > MAX_SPEED)
+	if (magnitude(velocity) > MAX_SPEED)
 	{
 		velocity = glm::normalize(velocity) * MAX_SPEED;
 	}
@@ -85,7 +85,7 @@ vector3 Simplex::PhysicsInfo::GetVelocity()
 
 PhysicsInfo::PhysicsInfo(float mss, vector3 pos, vector3 cent, vector3 limit)
 {
-	velocity = vector3(0.01f);
+	velocity = vector3(100);
 	acceleration = vector3(0.0f);
 	mass = mss;
 	position = pos;
@@ -103,4 +103,10 @@ vector3 PhysicsInfo::normalize(const vector3 &v)
 {
 	float length_of_v = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
 	return vector3(v.x / length_of_v, v.y / length_of_v, v.z / length_of_v);
+}
+
+float PhysicsInfo::magnitude(const vector3 &v)
+{
+	float length_of_v = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+	return length_of_v;
 }
