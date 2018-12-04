@@ -103,6 +103,9 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 			FocusOnCue(cueBall);
 		}
 		break;
+	case sf::Keyboard::R:
+		RemoveBall(m_pEntityMngr->GetEntity(-1));
+		break;
 	}
 	
 	//gui
@@ -408,7 +411,7 @@ void Simplex::Application::LerpCameraToCenter(void)
 {
 	progress += lerpSpeed;
 	vector3 cameraPos = m_pCameraMngr->GetPosition();
-	vector3 target = m_pCameraMngr->GetForward() * 100.0f;
+	vector3 target = cueBallRB->GetCenterGlobal();
 
 	vector3 newPos = glm::lerp(cameraPos, initialCameraPos, progress);
 	vector3 newTarget = glm::lerp(target, initialCameraTar, progress);
@@ -560,7 +563,6 @@ void Application::ProcessKeyboard(void)
 		{
 			vector3 up = m_pCameraMngr->GetUpward();
 			vector3 center = cueBallRB->GetCenterGlobal();
-			vector3 cameraPos = m_pCameraMngr->GetPosition();
 
 			vector3 newPos = glm::normalize(center - cameraStartPos);
 			quaternion myQuat = glm::eulerAngleXY(glm::radians(rotationX), glm::radians(rotationY));

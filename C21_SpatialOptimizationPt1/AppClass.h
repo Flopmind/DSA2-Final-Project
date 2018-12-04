@@ -27,7 +27,7 @@ class Application
 	vector3 initialCameraPos = vector3(25.8f, 27.0f, 102.9f);
 	vector3 initialCameraTar = vector3(-23.0f, -29.0f, -93.0f);
 	float progress = 0.0f;
-	float lerpSpeed = 0.001f;
+	float lerpSpeed = 0.0005f;
 	bool cameraLerping = false;
 
 	// for hitting cue ball
@@ -337,14 +337,36 @@ private:
 	OUTPUT: ---
 	*/
 	void NewFrame(void);
-
+	/*
+	USAGE: Focuses camera on cue ball, Allows player to hit it
+	ARGUMENTS: pointer to cue ball
+	OUTPUT: ---
+	*/
 	void FocusOnCue(MyEntity* cueBall);
-
+	/*
+	USAGE: Gets the force with which to hit the cue ball using user input
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
 	void GetCueForce(void);
-
+	/*
+	USAGE: Moves camera to initial position
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
 	void LerpCameraToCenter(void);
-
+	/*
+	USAGE: Returns true if a ball is moving, false otherwise
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
 	bool BallsMoving(void);
+	/*
+	USAGE: Remove a ball from the game
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
+	void RemoveBall(MyEntity* ball);
 
 
 #pragma endregion

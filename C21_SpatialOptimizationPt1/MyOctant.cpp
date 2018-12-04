@@ -251,7 +251,6 @@ void Simplex::MyOctant::RemoveEntity(MyEntity * toRemove)
 	{
 		m_pEntityMngr->RemoveDimension(i, x);
 	}
-	
 }
 
 void MyOctant::Swap(MyOctant& other)
