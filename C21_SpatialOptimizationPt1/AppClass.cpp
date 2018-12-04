@@ -122,7 +122,7 @@ void Application::InitVariables(void)
 
 
 	m_pEntityMngr->Update();
-	m_pRoot = new MyOctant(3);
+	m_pRoot = new MyOctant(2);
 
 	// Initialize the position of the pointer to the middle of the screen
 	centerX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;

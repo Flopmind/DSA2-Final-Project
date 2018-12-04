@@ -4,7 +4,7 @@ uint MyOctant::m_nCount = 0;
 
 static std::map<int, MyOctant*> OctLookUpTable;
 
-static const int MAXDEPTH = 1;
+static const int MAXDEPTH = 2;
 static int dimCounter = -1;
 
 //  MyOctant
@@ -161,6 +161,7 @@ void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 			if (!x.second[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody)) //if the entity is not colliding with the octant it's supposedly a part of
 			{
 				dirtyEntities.push_back(x.second[i]);
+				m_pEntityMngr->RemoveDimension(x.second[i]->GetUniqueID(), x.first);
 			}
 		}
 	}
