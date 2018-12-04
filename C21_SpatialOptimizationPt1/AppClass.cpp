@@ -170,62 +170,13 @@ void Application::Update(void)
 		//std::map<MyEntity*,PhysicsInfo>::iterator iter = std::find(x.first->GetRigidBody()->m_CollidingRBSet.begin(), x.first->GetRigidBody()->m_CollidingRBSet.end(), )
 		for (const auto& y : x.first->GetRigidBody()->m_CollidingRBSet) 
 		{
-			//std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
-			//loopThrough = std::find(poolBallInfo.begin(), poolBallInfo.end(), );
-			//std::map<MyEntity*, PhysicsInfo>::iterator collideIt = poolBallInfo.find(y);
 			PhysicsInfo collideInfo = Find(y);
 			if (collideInfo.mass != 999)
 			{
-
 				outer->second.Collision(collideInfo);
 			}
 		}
 	}
-	//for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
-	//{
-	//	MyRigidBody* rig = outer->first->GetRigidBody();
-	//	std::set<MyRigidBody*>::iterator it;
-	//	for (it = rig->m_CollidingRBSet.begin(); it != rig->m_CollidingRBSet.end(); ++it)
-	//	{
-	//		// resolve collisions
-	//		std::cout << "KILL ME" << std::endl;
-	//		PhysicsInfo collideInfo = Find(*it);
-	//		if (collideInfo != NULL)
-	//		{
-
-	//			outer->second.Collision(collideInfo);
-	//		}
-	//	}/*
-	//	for (uint i = 0; i < rig->m_nCollidingSetSize; ++i)
-	//	{
-	//		
-	//	}*/
-	//}
-	/*
-	//crappy temp collision detection
-	std::map<MyEntity*, PhysicsInfo>::iterator outer;
-	std::map<MyEntity*, PhysicsInfo>::iterator inner;
-	for (outer = poolBallInfo.begin(); outer != poolBallInfo.end(); outer++)
-	{
-		inner = outer;
-		inner++;
-		if (inner != poolBallInfo.end())
-		{
-			for (inner = inner; inner != poolBallInfo.end(); inner++)
-			{
-				if (outer->first != inner->first && outer->first->IsColliding(inner->first))
-				{
-					outer->second.Collision(inner->second);
-				}
-			}
-		}
-	}
-	*/
-
-	/*vector3 vel = poolBallInfo[cueBall].GetVelocity();
-	poolBallInfo[cueBall].UpdateVelocity();
-	std::cout << "Cue Ball Velocity: " << "( "<< vel.x  << ", " << vel.y << ", " << vel.z << ")" << std::endl;
-	cueBall->SetModelMatrix(cueBall->GetModelMatrix() * glm::translate(vel));*/
 
 	//Update Entity Manager
 	m_pEntityMngr->Update();
@@ -280,7 +231,7 @@ void Application::Release(void)
 PhysicsInfo Application::Find(MyRigidBody* rigid)
 {
 	std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
-	loopThrough = std::find(poolBallInfo.begin(),poolBallInfo.end(), loopThrough->first->GetRigidBody());
+	loopThrough = std::find(poolBallInfo.begin(), poolBallInfo.end(), loopThrough->first->GetRigidBody());
 	for (loopThrough = poolBallInfo.begin(); loopThrough != poolBallInfo.end(); loopThrough++)
 	{
 		if (rigid->IsEqual(*loopThrough->first->GetRigidBody()))
@@ -288,7 +239,7 @@ PhysicsInfo Application::Find(MyRigidBody* rigid)
 			return loopThrough->second;
 		}
 	}
-	return nullptr;
+	return PhysicsInfo(999);
 }
 
 void Simplex::Application::RemoveBall(MyEntity* ball)
