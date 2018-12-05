@@ -153,59 +153,61 @@ void MyOctant::Subdivide()
 
 void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 {
-	//iterate through the entity list to check if they're still colliding with their dimensions
-	std::vector<MyEntity*> dirtyEntities = std::vector<MyEntity*>();
-	//iterating through the dim dictionary (map)
-	for (auto const&x : m_pEntityMngr->m_DimMap)
+	if (m_pEntityMngr->isUseOct)
 	{
-		for (size_t i = 0; i < x.second.size(); i++)
+		//iterate through the entity list to check if they're still colliding with their dimensions
+		std::vector<MyEntity*> dirtyEntities = std::vector<MyEntity*>();
+		//iterating through the dim dictionary (map)
+		for (auto const&x : m_pEntityMngr->m_DimMap)
 		{
-			if (!x.second[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody)) //if the entity is not colliding with the octant it's supposedly a part of
+			for (size_t i = 0; i < x.second.size(); i++)
 			{
-				dirtyEntities.push_back(x.second[i]);
-				m_pEntityMngr->RemoveDimension(x.second[i]->GetUniqueID(), x.first);
-			}
-		}
-	}
-
-	// clean dirty entities by adding them to the dimensions they're actually a part of
-	std::map<int, std::vector<MyEntity*>> dirtyDims = std::map<int, std::vector<MyEntity*>>();
-	for (size_t i = 0; i < dirtyEntities.size(); i++)
-	{
-		for (const auto&x : m_pEntityMngr->m_DimMap) 
-		{
-			if (!dirtyEntities[i]->IsInDimension(x.first)) //if the dirty entity is not in this dimension, check it
-			{
-				if (dirtyEntities[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody)) 
+				if (!x.second[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody)) //if the entity is not colliding with the octant it's supposedly a part of
 				{
-					//add the entity to the dimension
-					m_pEntityMngr->AddDimension(dirtyEntities[i]->GetUniqueID(), x.first);
-					OctLookUpTable[x.first]->m_ContainedEnts.push_back(dirtyEntities[i]); //the amount of quote-enquote cache invalidation that could happen with this many lookup tables and unsynchronized data might super blow, who knows
-
-					dirtyDims.insert(x);
+					dirtyEntities.push_back(x.second[i]);
+					m_pEntityMngr->RemoveDimension(x.second[i]->GetUniqueID(), x.first);
 				}
 			}
 		}
-		//clean the dimensions that need subdivision
-		for (const auto&x : dirtyDims)
-		{
-			if (m_pEntityMngr->m_DimMap[x.first].size() > OctLookUpTable[x.first]->m_iLim && OctLookUpTable[x.first]->m_nLevel < MAXDEPTH) //if the dimension is too full, subdivide
-			{
-				//destroy the dimension
-				for (size_t j = 0; j < m_pEntityMngr->m_DimMap[x.first].size(); j++)
-				{
-					m_pEntityMngr->RemoveDimension(m_pEntityMngr->m_DimMap[x.first][j]->GetUniqueID(), x.first);//i think i might be in indexer hell
-				}
-				//std::vector<int, std::vector<MyEntity*>>::iterator it = 
 
-				//and make the worlds anew
-				
-				m_pEntityMngr->m_DimMap.erase(x.first);
-				OctLookUpTable[x.first]->Subdivide();
+		// clean dirty entities by adding them to the dimensions they're actually a part of
+		std::map<int, std::vector<MyEntity*>> dirtyDims = std::map<int, std::vector<MyEntity*>>();
+		for (size_t i = 0; i < dirtyEntities.size(); i++)
+		{
+			for (const auto&x : m_pEntityMngr->m_DimMap)
+			{
+				if (!dirtyEntities[i]->IsInDimension(x.first)) //if the dirty entity is not in this dimension, check it
+				{
+					if (dirtyEntities[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody))
+					{
+						//add the entity to the dimension
+						m_pEntityMngr->AddDimension(dirtyEntities[i]->GetUniqueID(), x.first);
+						OctLookUpTable[x.first]->m_ContainedEnts.push_back(dirtyEntities[i]); //the amount of quote-enquote cache invalidation that could happen with this many lookup tables and unsynchronized data might super blow, who knows
+
+						dirtyDims.insert(x);
+					}
+				}
+			}
+			//clean the dimensions that need subdivision
+			for (const auto&x : dirtyDims)
+			{
+				if (m_pEntityMngr->m_DimMap[x.first].size() > OctLookUpTable[x.first]->m_iLim && OctLookUpTable[x.first]->m_nLevel < MAXDEPTH) //if the dimension is too full, subdivide
+				{
+					//destroy the dimension
+					for (size_t j = 0; j < m_pEntityMngr->m_DimMap[x.first].size(); j++)
+					{
+						m_pEntityMngr->RemoveDimension(m_pEntityMngr->m_DimMap[x.first][j]->GetUniqueID(), x.first);//i think i might be in indexer hell
+					}
+					//std::vector<int, std::vector<MyEntity*>>::iterator it = 
+
+					//and make the worlds anew
+
+					m_pEntityMngr->m_DimMap.erase(x.first);
+					OctLookUpTable[x.first]->Subdivide();
+				}
 			}
 		}
 	}
-
 
 }
 
@@ -256,6 +258,7 @@ void Simplex::MyOctant::RemoveEntity(MyEntity * toRemove)
 		std::vector<MyEntity*>::iterator it = std::find(OctLookUpTable[x]->m_ContainedEnts.begin(), OctLookUpTable[x]->m_ContainedEnts.end(), toRemove);
 		assert(it != OctLookUpTable[x]->m_ContainedEnts.end());//safety
 		OctLookUpTable[x]->m_ContainedEnts.erase(it);
+
 	}
 }
 

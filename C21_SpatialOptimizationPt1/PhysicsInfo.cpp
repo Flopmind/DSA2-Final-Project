@@ -56,7 +56,7 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo* info)
 	{
 		return;
 	}
-	vector3 nextVelDirect = glm::normalize(info->position - position);
+	vector3 nextVelDirect = glm::normalize(position - info->position);
 
 
 	//make all ball to ball collisions elastic

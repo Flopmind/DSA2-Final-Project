@@ -20,7 +20,7 @@ class MyEntityManager
 	std::vector<MyEntity*> m_EntityList; //entities list
 	PEntity* m_mEntityArray = nullptr; //array of Entity pointers
 public:
-
+	bool isUseOct = true;
 	std::map<int, std::vector<MyEntity*>> m_DimMap;
 	std::vector<MyEntity*> GetEntityList(void);
 	/*

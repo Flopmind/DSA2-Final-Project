@@ -185,13 +185,33 @@ void Simplex::MyEntityManager::Update(void)
 
 	//check collisions
 	//iterating through the dim dictionary (map)
-	for (auto const&x : m_DimMap) 
+	if (isUseOct) 
 	{
-		for (size_t i = 0; i < x.second.size(); i++)
+		for (auto const&x : m_DimMap)
 		{
-			for (size_t j = i+1; j < x.second.size(); j++)
+			for (size_t i = 0; i < x.second.size(); i++)
 			{
-				m_DimMap[x.first][i]->IsColliding(m_DimMap[x.first][j]);
+				for (size_t j = i + 1; j < x.second.size(); j++)
+				{
+					m_DimMap[x.first][i]->IsColliding(m_DimMap[x.first][j]);
+				}
+			}
+		}
+	}
+	else
+	{
+		for (const auto&x : m_DimMap) 
+		{
+			for (size_t i = 0; i < x.second.size(); i++)
+			{
+				for (const auto&y : m_DimMap)
+				{
+					for (size_t j = 0; j < y.second.size(); j++)
+					{
+						if (!(i == j && x.first == y.first))
+							m_DimMap[x.first][i]->IsColliding(m_DimMap[y.first][j]);
+					}
+				}
 			}
 		}
 	}
@@ -351,11 +371,11 @@ void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 		a_uIndex = m_EntityList.size() - 1;
 
 	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
-	if (it != m_DimMap.end()) {
-		std::vector<MyEntity*>::iterator it = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), m_EntityList[a_uIndex]);//oh my god fuck iterators who thought this was okay
-		if (it != m_DimMap[a_uDimension].end())
-			m_DimMap[a_uDimension].erase(it);
-	}
+	assert(it != m_DimMap.end());
+	std::vector<MyEntity*>::iterator iter = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), m_EntityList[a_uIndex]);//oh my god fuck iterators who thought this was okay
+	if (iter != m_DimMap[a_uDimension].end())
+		m_DimMap[a_uDimension].erase(iter);
+	
 
 	m_EntityList[a_uIndex]->RemoveDimension(a_uDimension);
 }

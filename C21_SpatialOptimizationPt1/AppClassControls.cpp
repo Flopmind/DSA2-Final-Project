@@ -106,6 +106,9 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	case sf::Keyboard::B:
 		AddBalls();
 		break;
+	case sf::Keyboard::O:
+		m_pEntityMngr->isUseOct = !m_pEntityMngr->isUseOct;
+		break;
 	}
 	
 	//gui
