@@ -60,8 +60,10 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
 
 
 	//make all ball to ball collisions elastic
-
-	float angle = acosf(glm::dot(oldVel, nextVelDirect) / (magnitude(glm::normalize(oldVel)) * magnitude(nextVelDirect)));
+	float getAngle = glm::dot(glm::normalize(oldVel), nextVelDirect);
+	// [-1, 1]
+	std::cout << "angle - " << getAngle << std::endl;
+	float angle = acosf(getAngle);
 	angle = sinf(angle);
 	if (angle < 0)
 		angle *= -1;
@@ -72,7 +74,7 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
 		//info.velocity = 0.5f * oldVel.length * nextVelDirect;
 
 		//actual line
-		info.velocity = angle * magnitude(oldVel) * nextVelDirect;
+		info.SetVelocity(angle * magnitude(oldVel) * nextVelDirect);
 		vector3 nextVec = (magnitude(oldVel) * oldVel) - (magnitude(info.velocity) * info.velocity);
 		nextVecMag = magnitude(nextVec);
 		if (nextVecMag < 0)
@@ -84,7 +86,7 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
 	}
 	else if (magnitude(info.velocity) == 0)
 	{
-		info.velocity = oldVel;
+		info.SetVelocity(oldVel);
 		velocity = vector3(0.0f);
 	}
 	if (isnan(velocity.x) || isnan(velocity.y) || isnan(velocity.z))
@@ -143,4 +145,9 @@ float PhysicsInfo::magnitude(const vector3 &v)
 float PhysicsInfo::GetMagnitude()
 {
 	return magnitude(velocity);
+}
+
+void PhysicsInfo::SetVelocity(vector3 nextVel)
+{
+	velocity = nextVel;
 }

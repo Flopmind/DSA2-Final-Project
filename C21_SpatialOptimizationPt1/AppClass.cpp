@@ -158,10 +158,10 @@ void Application::Update(void)
 	for (it = poolBallInfo.begin(); it != poolBallInfo.end(); it++)
 	{
 		(it->second).UpdateVelocity();
-		vector3 vel = (it->second).GetVelocity();
-		if (!isnan(vel.x) && !isnan(vel.y) && !isnan(vel.z))
+		vector3 pos = (it->second).position;
+		if (!isnan(pos.x) && !isnan(pos.y) && !isnan(pos.z))
 		{
-			(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
+			(it->first)->SetModelMatrix(/*(it->first)->GetModelMatrix() * */glm::translate(pos));
 		}
 	}
 
@@ -177,6 +177,8 @@ void Application::Update(void)
 			if (x.second.GetMagnitude() > 0.0f && collideInfo.mass != 999.0f)
 			{
 				poolBallInfo[x.first].Collision(collideInfo);
+				x.first->GetRigidBody()->RemoveCollisionWith(y);
+				y->RemoveCollisionWith(x.first->GetRigidBody());
 			}
 		}
 	}
