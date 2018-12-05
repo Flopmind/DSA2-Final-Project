@@ -283,9 +283,9 @@ void Simplex::Application::AddBalls(void)
 		vector3 v3Position = vector3(v1, v2, v3);
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
+		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
-		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
+		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(ball, info));
 		m_pRoot->AddEntity(ball);
 	}
 }
