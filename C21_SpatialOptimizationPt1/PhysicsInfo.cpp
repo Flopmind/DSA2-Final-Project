@@ -108,7 +108,7 @@ PhysicsInfo::PhysicsInfo(float mss, vector3 pos, vector3 cent, vector3 limit)
 	position = pos;
 	center = cent;
 	limits = limit;
-	frictionMagnitude = 0.005f;
+	frictionMagnitude = 0.0035f;
 }
 
 

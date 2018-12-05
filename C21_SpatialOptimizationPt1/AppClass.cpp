@@ -187,6 +187,25 @@ void Application::Update(void)
 		}
 	}
 
+	for (int i = 8; i < 16; i++)
+	{
+		if (m_pEntityMngr->GetEntityCount() > 0)
+		{
+			if (cueBallRB->IsColliding(m_pEntityMngr->GetRigidBody(i)))
+			{
+				gameScore--;
+				vector3 tempVec = vector3(0.0f, 0.0f, 0.0f);
+				matrix4 m4Position = glm::translate(tempVec);
+				String id = cueBall->GetUniqueID();
+				m_pEntityMngr->SetModelMatrix(m4Position, id);
+				poolBallInfo.erase(cueBall);
+				PhysicsInfo* info = new PhysicsInfo(1.0f, tempVec, vector3(0.0f), vector3(36.0f));
+				poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(cueBall, info));
+			}
+		}
+		
+	}
+
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 
