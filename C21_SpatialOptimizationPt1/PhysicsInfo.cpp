@@ -23,21 +23,21 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 	{
 		velocity.z *= -1;
 	}
-	if (magnitude(velocity) > 0)
+	float velMag = magnitude(velocity);
+	if (velMag > 0)
 	{
 		vector3 frictionForce = (-frictionMagnitude * glm::normalize(velocity));
 		//std::cout << "fric - " << magnitude(frictionForce) << ";" << std::endl;
 		//std::cout << "vel - " << magnitude(velocity) << ";" << std::endl;
 		//std::cout << "net - " << magnitude(velocity - frictionForce) << ";" << std::endl;
 		//std::cout << "net2 - " << magnitude(velocity)  - magnitude(frictionForce) << ";" << std::endl;
-		if (magnitude(frictionForce) > magnitude(velocity))
+		if (frictionMagnitude > velMag)
 		{
 			velocity = vector3(0.0f);
 		}
 		else
 		{
 			velocity += frictionForce;
-			//std::cout << frictionForce.length() << ";" << std::endl;
 		}
 	}
 	// clamp magnitude of velocity to max speed
@@ -61,25 +61,36 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
 
 	//make all ball to ball collisions elastic
 
-	float angle = glm::dot(oldVel, nextVelDirect) / (oldVel.length() * nextVelDirect.length());
-	angle = sin(angle);
+	float angle = acosf(glm::dot(oldVel, nextVelDirect) / (magnitude(glm::normalize(oldVel)) * magnitude(nextVelDirect)));
+	angle = sinf(angle);
 	if (angle < 0)
 		angle *= -1;
-	if (info.velocity.length() == 0 && angle != 1)
+	float nextVecMag;
+	if (magnitude(info.velocity) == 0 && angle != 1)
 	{
 		//This next line is not correct, use if actual line isn't working and you absolutely need something
 		//info.velocity = 0.5f * oldVel.length * nextVelDirect;
 
 		//actual line
-		info.velocity = angle * oldVel.length() * nextVelDirect;
-		velocity = sqrt((oldVel.length() * oldVel) - (info.velocity.length() * info.velocity));
+		info.velocity = angle * magnitude(oldVel) * nextVelDirect;
+		vector3 nextVec = (magnitude(oldVel) * oldVel) - (magnitude(info.velocity) * info.velocity);
+		nextVecMag = magnitude(nextVec);
+		if (nextVecMag < 0)
+		{
+			nextVecMag *= -1;
+		}
+		nextVecMag = sqrt(nextVecMag);
+		velocity = nextVecMag * glm::normalize(nextVec);
 	}
-	else if (info.velocity.length() == 0)
+	else if (magnitude(info.velocity) == 0)
 	{
 		info.velocity = oldVel;
 		velocity = vector3(0.0f);
 	}
-
+	if (isnan(velocity.x) || isnan(velocity.y) || isnan(velocity.z))
+	{
+		std::cout << "-" << std::endl;
+	}
 }
 
 vector3 Simplex::PhysicsInfo::GetVelocity()
@@ -105,13 +116,27 @@ PhysicsInfo::~PhysicsInfo()
 
 vector3 PhysicsInfo::normalize(const vector3 &v)
 {
-	float length_of_v = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+	float sum = (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
+	if (sum < 0)
+	{
+		sum *= -1;
+	}
+	float length_of_v = sqrt(sum);
 	return vector3(v.x / length_of_v, v.y / length_of_v, v.z / length_of_v);
 }
 
 float PhysicsInfo::magnitude(const vector3 &v)
 {
-	float length_of_v = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+	float sum = (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
+	if (sum < 0)
+	{
+		sum *= -1;
+	}
+	float length_of_v = sqrt(sum);
+	if (isnan(length_of_v))
+	{
+		throw ExceptionCollidedUnwind;
+	}
 	return length_of_v;
 }
 

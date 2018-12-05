@@ -159,7 +159,10 @@ void Application::Update(void)
 	{
 		(it->second).UpdateVelocity();
 		vector3 vel = (it->second).GetVelocity();
-		(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
+		if (!isnan(vel.x) && !isnan(vel.y) && !isnan(vel.z))
+		{
+			(it->first)->SetModelMatrix((it->first)->GetModelMatrix() * glm::translate(vel));
+		}
 	}
 
 

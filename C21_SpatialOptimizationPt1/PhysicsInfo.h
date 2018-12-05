@@ -17,7 +17,7 @@ namespace Simplex
 		vector3 center;
 		vector3 limits;
 		float mass;
-		const float MAX_SPEED = 50.0f;
+		const float MAX_SPEED = 20.0f;
 		float frictionMagnitude;
 
 		void ApplyForce(vector3 force);
