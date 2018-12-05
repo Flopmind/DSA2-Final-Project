@@ -23,6 +23,9 @@ class Application
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	MyOctant* m_pRoot = nullptr;
 
+	//score
+	int gameScore = 0;
+
 	// for lerping camera
 	vector3 initialCameraPos = vector3(25.8f, 27.0f, 102.9f);
 	vector3 initialCameraTar = vector3(-23.0f, -29.0f, -93.0f);
@@ -367,6 +370,10 @@ private:
 	OUTPUT: ---
 	*/
 	void RemoveBall(MyEntity* ball);
+	/*
+	USAGE: Add more pool balls
+	*/
+	void AddBalls(void);
 
 
 #pragma endregion

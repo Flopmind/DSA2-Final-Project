@@ -44,6 +44,9 @@ void Application::DrawGUI(void)
 			ImGui::Text("	 F2: Orthographic X\n");
 			ImGui::Text("	 F3: Orthographic Y\n");
 			ImGui::Text("	 F4: Orthographic Z\n");
+			int ballCount = static_cast<int>(m_pEntityMngr->GetEntityCount()) - 9;
+			ImGui::Text("Balls: %i \n", ballCount);
+			ImGui::Text("Score: %i \n", gameScore);
 			ImGui::Separator();
 			ImGui::TextColored(ImColor(255, 255, 0), "Spatial Optimization\n");
 			int textCueForce = static_cast<int>(cueForce);
@@ -51,6 +54,7 @@ void Application::DrawGUI(void)
 			ImGui::Text("Press 'F' to Toggle Focus on Cue Ball");
 			ImGui::Text("Left Click and Drag to Increase Force");
 			ImGui::Text("Force: %i", textCueForce);
+			ImGui::Text("Press 'B' to spawn more balls");
 			ImGui::Separator();
 		}
 		ImGui::End();

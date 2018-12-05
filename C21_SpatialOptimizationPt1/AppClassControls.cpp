@@ -103,6 +103,9 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 			FocusOnCue(cueBall);
 		}
 		break;
+	case sf::Keyboard::B:
+		AddBalls();
+		break;
 	}
 	
 	//gui
