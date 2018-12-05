@@ -23,17 +23,6 @@ void Application::InitVariables(void)
 
 	poolBallInfo = std::map<MyEntity*, PhysicsInfo*>();
 
-	/*for (int i = 0; i < nSquare; i++)
-	{
-		
-		m_pEntityMngr->AddEntity("Minecraft\\Cube.obj");
-		vector3 v3Position = vector3(glm::sphericalRand(34.0f));
-		matrix4 m4Position = glm::translate(v3Position);
-		m_pEntityMngr->SetModelMatrix(m4Position);
-		
-		uIndex++;
-	
-	}*/
 
 		//Adds the balls to the scene
 #pragma region balls
@@ -44,7 +33,11 @@ void Application::InitVariables(void)
 		name += std::to_string(i);
 		name += "Ball.obj";
 		m_pEntityMngr->AddEntity(name);
-		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
+		//vector3 v3Position = vector3(glm::sphericalRand(25.0f));
+		float v1 = glm::linearRand(-30.0f, 30.0f);
+		float v2 = glm::linearRand(-30.0f, 30.0f);
+		float v3 = glm::linearRand(-30.0f, 30.0f);
+		vector3 v3Position = vector3(v1, v2, v3);
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
 		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
@@ -273,4 +266,26 @@ void Simplex::Application::RemoveBall(MyEntity* ball)
 
 	// remove ball from entity manager (also deletes ball pointer)
 	m_pEntityMngr->RemoveEntity(ball->GetUniqueID());
+}
+
+void Simplex::Application::AddBalls(void)
+{
+	for (int i = 1; i < 8; i++)
+	{
+		Simplex::String name = "Models\\";
+		name += std::to_string(i);
+		name += "Ball.obj";
+		m_pEntityMngr->AddEntity(name);
+		//vector3 v3Position = vector3(glm::sphericalRand(25.0f));
+		float v1 = glm::linearRand(-30.0f, 30.0f);
+		float v2 = glm::linearRand(-30.0f, 30.0f);
+		float v3 = glm::linearRand(-30.0f, 30.0f);
+		vector3 v3Position = vector3(v1, v2, v3);
+		matrix4 m4Position = glm::translate(v3Position);
+		m_pEntityMngr->SetModelMatrix(m4Position);
+		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
+		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
+		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
+		m_pRoot->AddEntity(ball);
+	}
 }
