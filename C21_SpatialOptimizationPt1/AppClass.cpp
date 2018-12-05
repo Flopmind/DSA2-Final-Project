@@ -21,7 +21,7 @@ void Application::InitVariables(void)
 	matrix4 m4Position;
 	uint uIndex = 0;
 
-	poolBallInfo = std::map<MyEntity*, PhysicsInfo>();
+	poolBallInfo = std::map<MyEntity*, PhysicsInfo*>();
 
 	/*for (int i = 0; i < nSquare; i++)
 	{
@@ -47,9 +47,9 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(glm::sphericalRand(25.0f));
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
+		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
-		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(ball, info));
+		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(ball, info));
 		//m_pEntityMngr->AddDimension(-1, uIndex);
 		//uIndex++;
 	}
@@ -117,8 +117,8 @@ void Application::InitVariables(void)
 
 	cueBall = m_pEntityMngr->GetEntity(-1);
 	cueBallRB = cueBall->GetRigidBody();
-	PhysicsInfo info = PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
-	poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo>(cueBall, info));
+	PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
+	poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(cueBall, info));
 
 
 	m_pEntityMngr->Update();
@@ -152,13 +152,13 @@ void Application::Update(void)
 
 	if (cameraLerping) LerpCameraToCenter();
 
-	std::map<MyEntity*, PhysicsInfo>::iterator it;
+	std::map<MyEntity*, PhysicsInfo*>::iterator it;
 
 	// update the velocity and move all the balls
 	for (it = poolBallInfo.begin(); it != poolBallInfo.end(); it++)
 	{
-		(it->second).UpdateVelocity();
-		vector3 pos = (it->second).position;
+		(it->second)->UpdateVelocity();
+		vector3 pos = (it->second)->position;
 		if (!isnan(pos.x) && !isnan(pos.y) && !isnan(pos.z))
 		{
 			(it->first)->SetModelMatrix(/*(it->first)->GetModelMatrix() * */glm::translate(pos));
@@ -166,19 +166,30 @@ void Application::Update(void)
 	}
 
 
-	//std::map<MyEntity*, PhysicsInfo>::iterator outer;
-
+	//std::map<MyEntity*, PhysicsInfo*>::iterator outer;
+	//collide with all the things
 	for (auto& x : poolBallInfo) 
 	{
 		//std::map<MyEntity*,PhysicsInfo>::iterator iter = std::find(x.first->GetRigidBody()->m_CollidingRBSet.begin(), x.first->GetRigidBody()->m_CollidingRBSet.end(), )
 		for (const auto& y : x.first->GetRigidBody()->m_CollidingRBSet) 
 		{
-			PhysicsInfo collideInfo = Find(y);
-			if (x.second.GetMagnitude() > 0.0f && collideInfo.mass != 999.0f)
+			float fDist = glm::distance(x.first->GetRigidBody()->GetCenterGlobal(), y->GetCenterGlobal());
+			if ( fDist < x.first->GetRigidBody()->GetRadius() + y->GetRadius())//if the entities are sphere colliding, resolve
 			{
-				poolBallInfo[x.first].Collision(collideInfo);
-				x.first->GetRigidBody()->RemoveCollisionWith(y);
-				y->RemoveCollisionWith(x.first->GetRigidBody());
+				//offset
+				vector3 v3Dir = PhysicsInfo::normalize(x.first->GetRigidBody()->GetCenterGlobal() - y->GetCenterGlobal());
+				v3Dir = v3Dir * (2.05 * x.first->GetRigidBody()->GetRadius());
+
+				PhysicsInfo* collideInfo = Find(y);
+
+				collideInfo->position = x.second->position + v3Dir;
+
+				if (x.second->GetMagnitude() > 0.0f && collideInfo->mass != 999.0f)
+				{
+					poolBallInfo[x.first]->Collision(collideInfo);
+					//x.first->GetRigidBody()->RemoveCollisionWith(y);
+					//y->RemoveCollisionWith(x.first->GetRigidBody());
+				}
 			}
 		}
 	}
@@ -229,13 +240,18 @@ void Application::Release(void)
 {
 
 	SafeDelete(m_pRoot);
+
+	for (auto&x : poolBallInfo) {
+
+		SafeDelete(x.second);
+	}
 	//release GUI
 	ShutdownGUI();
 }
 
-PhysicsInfo Application::Find(MyRigidBody* rigid)
+PhysicsInfo* Application::Find(MyRigidBody* rigid)
 {
-	std::map<MyEntity*, PhysicsInfo>::iterator loopThrough;
+	std::map<MyEntity*, PhysicsInfo*>::iterator loopThrough;
 	//loopThrough = std::find(poolBallInfo.begin(), poolBallInfo.end(), loopThrough->first->GetRigidBody());
 	for (loopThrough = poolBallInfo.begin(); loopThrough != poolBallInfo.end(); loopThrough++)
 	{
@@ -244,7 +260,7 @@ PhysicsInfo Application::Find(MyRigidBody* rigid)
 			return loopThrough->second;
 		}
 	}
-	return PhysicsInfo(999);
+	return new PhysicsInfo(999);
 }
 
 void Simplex::Application::RemoveBall(MyEntity* ball)

@@ -8,7 +8,6 @@ namespace Simplex
 {
 	class PhysicsInfo
 	{
-	vector3 normalize(const vector3 &v);
 	float magnitude(const vector3 &v);
 	public:
 		vector3 position;
@@ -22,11 +21,12 @@ namespace Simplex
 
 		void ApplyForce(vector3 force);
 		void UpdateVelocity();
-		void Collision(PhysicsInfo info);
+		void Collision(PhysicsInfo* info);
 		vector3 GetVelocity();
 		void SetVelocity(vector3 nextVel);
 		float GetMagnitude();
 
+		static vector3 normalize(const vector3 &v);
 		PhysicsInfo(float mss = 1.0f, vector3 pos = vector3(0.0f), vector3 center = vector3(0.0f), vector3 limits = vector3(50.0f));
 		~PhysicsInfo();
 	};

@@ -45,7 +45,7 @@ class Application
 	MyEntity* cueBall = nullptr;
 	MyRigidBody* cueBallRB = nullptr;
 
-	std::map<MyEntity*, PhysicsInfo> poolBallInfo;
+	std::map<MyEntity*, PhysicsInfo*> poolBallInfo;
 		
 private:
 	String m_sProgrammer = "Large HeadDesk Colliders"; //programmer
@@ -92,7 +92,7 @@ public:
 	OUTPUT: ---
 	*/
 	Application();
-	PhysicsInfo Find(MyRigidBody* rigid);
+	PhysicsInfo* Find(MyRigidBody* rigid);
 	/*
 	USAGE: Initializes the window and rendering context
 	ARGUMENTS:

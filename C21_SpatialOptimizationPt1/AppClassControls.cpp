@@ -51,7 +51,7 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 			vector3 direction = glm::normalize(position - m_pCameraMngr->GetPosition());
 			cueForce = MapValue(cueForce, 0.0f, 400.0f, 0.0f, maxCueForce); // first range is how much drawing the mouse back impacts the force
 																	          // second range is possible forces (from 0 to max force)
-			poolBallInfo[cueBall].ApplyForce(direction * cueForce);
+			poolBallInfo[cueBall]->ApplyForce(direction * cueForce);
 			hittingCue = false;
 			followCue = false;
 			cameraLerping = true;
@@ -426,11 +426,11 @@ bool Simplex::Application::BallsMoving(void)
 {
 	bool moving = false;
 
-	std::map<MyEntity*, PhysicsInfo>::iterator it;
+	std::map<MyEntity*, PhysicsInfo*>::iterator it;
 
 	for (it = poolBallInfo.begin(); it != poolBallInfo.end(); it++)
 	{
-		vector3 vel = (it->second).GetVelocity();
+		vector3 vel = (it->second)->GetVelocity();
 		if (glm::length(vel) > 0)
 		{
 			moving = true;

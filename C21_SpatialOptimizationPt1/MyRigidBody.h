@@ -19,7 +19,6 @@ class MyRigidBody
 	bool m_bVisibleOBB = true; //Visibility of Oriented bounding box
 	bool m_bVisibleARBB = true; //Visibility of axis (Re)aligned bounding box
 
-	float m_fRadius = 0.0f; //Radius
 
 	vector3 m_v3ColorColliding = C_RED; //Color when colliding
 	vector3 m_v3ColorNotColliding = C_WHITE; //Color when not colliding
@@ -40,6 +39,7 @@ class MyRigidBody
 
 
 public:
+	float m_fRadius = 0.0f; //Radius
 	uint m_nCollidingSetSize = 0; //size of the colliding set
 	std::set<MyRigidBody*> m_CollidingRBSet; //set of rigid bodies this one is colliding with
 	void MakeCubic(void);

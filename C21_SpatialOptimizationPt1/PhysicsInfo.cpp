@@ -49,14 +49,14 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 }
 
 
-void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
+void Simplex::PhysicsInfo::Collision(PhysicsInfo* info)
 {
 	vector3 oldVel = velocity;
 	if (magnitude(oldVel) == 0.0f)
 	{
 		return;
 	}
-	vector3 nextVelDirect = glm::normalize(info.position - position);
+	vector3 nextVelDirect = glm::normalize(info->position - position);
 
 
 	//make all ball to ball collisions elastic
@@ -68,14 +68,14 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
 	if (angle < 0)
 		angle *= -1;
 	float nextVecMag;
-	if (magnitude(info.velocity) == 0 && angle != 1)
+	if (magnitude(info->velocity) == 0 && angle != 1)
 	{
 		//This next line is not correct, use if actual line isn't working and you absolutely need something
 		//info.velocity = 0.5f * oldVel.length * nextVelDirect;
 
 		//actual line
-		info.SetVelocity(angle * magnitude(oldVel) * nextVelDirect);
-		vector3 nextVec = (magnitude(oldVel) * oldVel) - (magnitude(info.velocity) * info.velocity);
+		info->SetVelocity(angle * magnitude(oldVel) * nextVelDirect);
+		vector3 nextVec = (magnitude(oldVel) * oldVel) - (magnitude(info->velocity) * info->velocity);
 		nextVecMag = magnitude(nextVec);
 		if (nextVecMag < 0)
 		{
@@ -84,9 +84,9 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo info)
 		nextVecMag = sqrt(nextVecMag);
 		velocity = nextVecMag * glm::normalize(nextVec);
 	}
-	else if (magnitude(info.velocity) == 0)
+	else if (magnitude(info->velocity) == 0)
 	{
-		info.SetVelocity(oldVel);
+		info->SetVelocity(oldVel);
 		velocity = vector3(0.0f);
 	}
 	if (isnan(velocity.x) || isnan(velocity.y) || isnan(velocity.z))
