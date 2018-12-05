@@ -187,6 +187,24 @@ void Application::Update(void)
 		}
 	}
 
+	//ball vs pocket collision
+	for (int i = 8; i < 16; i++) //pockets loop
+	{
+		for (int j = 0; j < m_pEntityMngr->GetEntityCount(); j++) //loop entities UNOPTIMIZED
+		{
+			//ignore pockets and cueball
+			if (j < 8 || j > 16)
+			{
+				if (m_pEntityMngr->GetRigidBody(i)->IsColliding(m_pEntityMngr->GetRigidBody(j)))
+				{
+					gameScore++;
+					RemoveBall(m_pEntityMngr->GetEntity(j));
+				}
+			}
+		}
+	}
+
+	//Cueball vs pocket collision
 	for (int i = 8; i < 16; i++)
 	{
 		if (m_pEntityMngr->GetEntityCount() > 0)
@@ -306,5 +324,7 @@ void Simplex::Application::AddBalls(void)
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(ball, info));
 		m_pRoot->AddEntity(ball);
+
+		m_pEntityMngr->Update();
 	}
 }
