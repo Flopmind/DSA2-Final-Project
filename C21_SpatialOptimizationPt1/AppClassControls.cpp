@@ -49,7 +49,7 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 		{
 			vector3 position = (cueBallRB->GetCenterGlobal());
 			vector3 direction = glm::normalize(position - m_pCameraMngr->GetPosition());
-			cueForce = MapValue(cueForce, 0.0f, 400.0f, 0.0f, maxCueForce); // first range is how much drawing the mouse back impacts the force
+			cueForce = MapValue(cueForce, 0.0f, 200.0f, 0.0f, maxCueForce); // first range is how much drawing the mouse back impacts the force
 																	          // second range is possible forces (from 0 to max force)
 			poolBallInfo[cueBall]->ApplyForce(direction * cueForce);
 			hittingCue = false;
@@ -382,12 +382,6 @@ void Simplex::Application::GetCueForce()
 
 	uint mouseX;
 	uint mouseY;
-	//uint centerX;
-	//uint centerY;
-
-	//Initialize the position of the pointer to the middle of the screen
-	//centerX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;
-	//centerY = m_pSystem->GetWindowY() + m_pSystem->GetWindowHeight() / 2;
 
 	//Calculate the position of the mouse and store it
 	POINT pt;
@@ -395,12 +389,21 @@ void Simplex::Application::GetCueForce()
 	mouseX = pt.x;
 	mouseY = pt.y;
 
+	// get the distance between the mouse and the center of the screen
 	float deltaMouse = glm::distance(vector2(mouseX, mouseY), vector2(centerX, centerY));
+
+	// get the change between that distance and the distance the previous frame
 	float trans = deltaMouse - prevDeltaMouse;
-	float maxTrans = MapValue(deltaMouse, 0.0f, 500.0f, 1.8f, 0.0f);
+	float maxTrans = MapValue(deltaMouse, 0.0f, 200.0f, 1.8f, 0.0f); // the farther away the mouse is from the center, 
+																	 // the less it is allowed to move from the previous position
 	if (trans > maxTrans)
 	{
 		deltaMouse -= (trans - maxTrans);
+	}
+	// make sure deltaMouse isn't an absurd number, which occasionally happens on multi-monitor setups
+	if (deltaMouse > 200.0f)
+	{
+		deltaMouse = 200.0f;
 	}
 
 	vector2 dir = glm::normalize(vector2(mouseX, mouseY) - vector2(centerX, centerY));
