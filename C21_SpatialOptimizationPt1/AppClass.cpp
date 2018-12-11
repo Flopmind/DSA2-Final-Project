@@ -32,7 +32,10 @@ void Application::InitVariables(void)
 		Simplex::String name = "Models\\";
 		name += std::to_string(i);
 		name += "Ball.obj";
-		m_pEntityMngr->AddEntity(name);
+		if (i != 8)
+			m_pEntityMngr->AddEntity(name);
+		else if (i == 8)
+			m_pEntityMngr->AddEntity(name, "8ball");
 		//vector3 v3Position = vector3(glm::sphericalRand(25.0f));
 		float v1 = glm::linearRand(-28.0f, 28.0f);
 		float v2 = glm::linearRand(-28.0f, 28.0f);
@@ -43,6 +46,10 @@ void Application::InitVariables(void)
 		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(ball, info));
+		if (i == 8) //if it is the eight ball, set the rigidbody to use for collision logic
+		{
+			eightBallRB = m_pEntityMngr->GetRigidBody("8ball");
+		}
 		//m_pEntityMngr->AddDimension(-1, uIndex);
 		//uIndex++;
 	}
@@ -53,52 +60,60 @@ void Application::InitVariables(void)
 #pragma region pockets
 
 	//front left bottom
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket1");
 	v3Position = vector3(-30.0, -30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[0] = m_pEntityMngr->GetRigidBody("pocket1");
 
 	//front right bottom
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket2");
 	v3Position = vector3(30.0, -30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[1] = m_pEntityMngr->GetRigidBody("pocket2");
 
 	//front right top
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket3");
 	v3Position = vector3(30.0, 30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[2] = m_pEntityMngr->GetRigidBody("pocket3");
 
 	 //front left top
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket4");
 	v3Position = vector3(-30.0, 30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[3] = m_pEntityMngr->GetRigidBody("pocket4");
 
 	//back left bottom
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket5");
 	v3Position = vector3(-30.0, -30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[4] = m_pEntityMngr->GetRigidBody("pocket5");
 
 	//back right bottom
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket6");
 	v3Position = vector3(30.0, -30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[5] = m_pEntityMngr->GetRigidBody("pocket6");
 
 	//back right top
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket7");
 	v3Position = vector3(30.0, 30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[6] = m_pEntityMngr->GetRigidBody("pocket7");
 
 	//back left top
-	m_pEntityMngr->AddEntity("Models\\pocket.obj");
+	m_pEntityMngr->AddEntity("Models\\pocket.obj", "pocket8");
 	v3Position = vector3(-30.0, 30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
+	pocketRBList[7] = m_pEntityMngr->GetRigidBody("pocket8");
 
 #pragma endregion pockets
 
@@ -188,9 +203,50 @@ void Application::Update(void)
 	}
 
 	//ball vs pocket collision
-	for (int i = 8; i < 16; i++) //pockets loop
+	for (int i = 0; i < 8; i++) //pockets loop
 	{
-		for (int j = 0; j < m_pEntityMngr->GetEntityCount(); j++) //loop entities UNOPTIMIZED
+		for (const auto& other : pocketRBList[i]->m_CollidingRBSet)
+		{
+			for (int j = 0; j < m_pEntityMngr->GetEntityCount(); j++)
+			{
+				if (other == cueBallRB) //if cueball
+				{
+					gameScore--;
+					vector3 tempVec = vector3(0.0f, 0.0f, 0.0f);
+					matrix4 m4Position = glm::translate(tempVec);
+					String id = cueBall->GetUniqueID();
+					m_pEntityMngr->SetModelMatrix(m4Position, id);
+					poolBallInfo.erase(cueBall);
+					PhysicsInfo* info = new PhysicsInfo(1.0f, tempVec, vector3(0.0f), vector3(36.0f));
+					poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(cueBall, info));
+				}
+
+				else if (other == eightBallRB) // if eight ball
+				{
+					ballCount = static_cast<int>(m_pEntityMngr->GetEntityCount()) - 9;
+					if (ballCount == 1) //only 8 ball is left
+					{
+						//game won
+						EightBallSunk = 1;
+					}
+					else
+					{
+						//game lost
+						EightBallSunk = 2;
+					}
+					//update remove index to be the 8 ball
+					removeIndex = m_pEntityMngr->GetEntityIndex("8ball"); 
+				}
+
+				else if (other == m_pEntityMngr->GetEntity(j)->GetRigidBody()) //if normal ball
+				{
+					gameScore++;
+					removeIndex = j;
+				}
+			}
+		}
+		
+		/*for (int j = 0; j < m_pEntityMngr->GetEntityCount(); j++) //loop entities UNOPTIMIZED
 		{
 			//ignore pockets, 8-ball, and cueball
 			if (j < 7 || j > 16)
@@ -220,11 +276,17 @@ void Application::Update(void)
 					RemoveBall(m_pEntityMngr->GetEntity(j));
 				}
 			}
-		}
+		}*/
 	}
+	if (removeIndex != -1) //removes ball if index was set above
+	{
+		RemoveBall(m_pEntityMngr->GetEntity(removeIndex));
+		removeIndex = -1;
+	}
+		
 
 	//Cueball vs pocket collision
-	for (int i = 8; i < 16; i++)
+	/*for (int i = 8; i < 16; i++)
 	{
 		if (m_pEntityMngr->GetEntityCount() > 0)
 		{
@@ -241,7 +303,7 @@ void Application::Update(void)
 			}
 		}
 		
-	}
+	}*/
 
 	//Update Entity Manager
 	m_pEntityMngr->Update();

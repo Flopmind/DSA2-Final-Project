@@ -27,6 +27,10 @@ class Application
 	int gameScore = 0;
 	int ballCount = 0;
 	int EightBallSunk = 0; //0 = not sunk, 1 = sunk and game won, 2 = scratched and game lost
+	MyEntity* eightBall = nullptr;
+	MyRigidBody* eightBallRB = nullptr;
+	MyRigidBody* pocketRBList[8];
+	int removeIndex = -1;
 
 	// for lerping camera
 	vector3 initialCameraPos = vector3(25.8f, 27.0f, 102.9f);
