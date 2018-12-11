@@ -71,7 +71,7 @@ void MyOctant::Subdivide()
 	{
 		for (size_t i = 0; i < 8; i++)
 		{
-			m_pChild[i]->Release();
+			m_pChild[i]->Release();//this is a safety more than anything, intended behaviour will not allow for subdivision of any dim with children
 		}
 	}
 
@@ -140,13 +140,17 @@ void MyOctant::Subdivide()
 			else
 				m_pChild[i]->Subdivide();
 		}
-		else 
+		else if (m_pChild[i]->m_ContainedEnts.size() > 0)
 		{
 			//...not over the limit, so add dimensions and return
 			for (size_t j = 0; j < m_pChild[i]->m_ContainedEnts.size(); j++)
 			{
 				m_pEntityMngr->AddDimension(m_pChild[i]->m_ContainedEnts[j]->GetUniqueID(), m_pChild[i]->m_iDim);
 			}
+		}
+		else //if completely empty, set a dummy
+		{
+			m_pEntityMngr->AddDimension("CHUNGUS", m_pChild[i]->m_iDim);//if the dim is empty, it still needs to be a part of the map, so add a dummy ent
 		}
 	}
 }

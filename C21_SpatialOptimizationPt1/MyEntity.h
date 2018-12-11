@@ -28,6 +28,7 @@ class MyEntity
 	static std::map<String, MyEntity*> m_IDMap; //a map of the unique ID's
 
 public:
+	bool m_bIsStatic = true;
 	std::vector<uint> m_DimensionList; //Dimensions on which this entity is located	
 	uint m_nDimensionCount = 0; //tells how many dimensions this entity lives in
 	/*

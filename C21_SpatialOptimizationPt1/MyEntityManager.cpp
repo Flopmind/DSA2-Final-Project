@@ -344,20 +344,26 @@ void Simplex::MyEntityManager::AddDimension(uint a_uIndex, uint a_uDimension)
 void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimension)
 {
 	//Get the entity
+	
 	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
-	//if the entity exists
-	if (pTemp)
+	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
+	if (it != m_DimMap.end() && pTemp) //if the dim is in the map and we have an entity to add
 	{
-		std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
-		if (it != m_DimMap.end())
-			m_DimMap[(int)a_uDimension].push_back(pTemp);
-		else
-		{
-			m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
-			m_DimMap[a_uDimension].push_back(pTemp);
-		}
+		m_DimMap[(int)a_uDimension].push_back(pTemp);
 		pTemp->AddDimension(a_uDimension);
 	}
+	else if (pTemp) //if the dim isn't in the map but we still have an entity
+	{
+		m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
+		m_DimMap[a_uDimension].push_back(pTemp);
+		pTemp->AddDimension(a_uDimension);
+	}
+	else if (it == m_DimMap.end()) //if neither, we still need to add a dim for backend reasons
+	{
+		m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
+	}
+	//if the dim isn't new and there's nothing to add, do nothing
+		
 
 }
 void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
@@ -371,7 +377,7 @@ void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 		a_uIndex = m_EntityList.size() - 1;
 
 	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
-	assert(it != m_DimMap.end());
+	assert(it != m_DimMap.end()); //if you try to delete a dim that doesn't exist you're a moron
 	std::vector<MyEntity*>::iterator iter = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), m_EntityList[a_uIndex]);//oh my god fuck iterators who thought this was okay
 	if (iter != m_DimMap[a_uDimension].end())
 		m_DimMap[a_uDimension].erase(iter);

@@ -102,7 +102,7 @@ vector3 Simplex::PhysicsInfo::GetVelocity()
 
 PhysicsInfo::PhysicsInfo(float mss, vector3 pos, vector3 cent, vector3 limit)
 {
-	velocity = vector3(0.1f);
+	velocity = vector3(0.0f);
 	acceleration = vector3(0.0f);
 	mass = mss;
 	position = pos;

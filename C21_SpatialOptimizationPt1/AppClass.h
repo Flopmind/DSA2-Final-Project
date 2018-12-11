@@ -49,8 +49,7 @@ class Application
 	MyRigidBody* cueBallRB = nullptr;
 
 	std::map<MyEntity*, PhysicsInfo*> poolBallInfo;
-		
-private:
+
 	String m_sProgrammer = "Large HeadDesk Colliders"; //programmer
 
 	static ImGuiObject gui; //GUI object
