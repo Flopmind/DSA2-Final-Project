@@ -34,9 +34,9 @@ void Application::InitVariables(void)
 		name += "Ball.obj";
 		m_pEntityMngr->AddEntity(name);
 		//vector3 v3Position = vector3(glm::sphericalRand(25.0f));
-		float v1 = glm::linearRand(-30.0f, 30.0f);
-		float v2 = glm::linearRand(-30.0f, 30.0f);
-		float v3 = glm::linearRand(-30.0f, 30.0f);
+		float v1 = glm::linearRand(-28.0f, 28.0f);
+		float v2 = glm::linearRand(-28.0f, 28.0f);
+		float v3 = glm::linearRand(-28.0f, 28.0f);
 		vector3 v3Position = vector3(v1, v2, v3);
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
@@ -54,49 +54,49 @@ void Application::InitVariables(void)
 
 	//front left bottom
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(-35.0f, -35.0f, 35.0f);
+	v3Position = vector3(-30.0, -30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	//front right bottom
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(35.0f, -35.0f, 35.0f);
+	v3Position = vector3(30.0, -30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	//front right top
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(35.0f, 35.0f, 35.0f);
+	v3Position = vector3(30.0, 30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	 //front left top
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(-35.0f, 35.0f, 35.0f);
+	v3Position = vector3(-30.0, 30.0, 30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	//back left bottom
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(-35.0f, -35.0f, -35.0f);
+	v3Position = vector3(-30.0, -30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	//back right bottom
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(35.0f, -35.0f, -35.0f);
+	v3Position = vector3(30.0, -30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	//back right top
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(35.0f, 35.0f, -35.0f);
+	v3Position = vector3(30.0, 30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	//back left top
 	m_pEntityMngr->AddEntity("Models\\pocket.obj");
-	v3Position = vector3(-35.0f, 35.0f, -35.0f);
+	v3Position = vector3(-30.0, 30.0, -30.0);
 	m4Position = glm::translate(v3Position);
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
@@ -192,12 +192,31 @@ void Application::Update(void)
 	{
 		for (int j = 0; j < m_pEntityMngr->GetEntityCount(); j++) //loop entities UNOPTIMIZED
 		{
-			//ignore pockets and cueball
-			if (j < 8 || j > 16)
+			//ignore pockets, 8-ball, and cueball
+			if (j < 7 || j > 16)
 			{
 				if (m_pEntityMngr->GetRigidBody(i)->IsColliding(m_pEntityMngr->GetRigidBody(j)))
 				{
 					gameScore++;
+					RemoveBall(m_pEntityMngr->GetEntity(j));
+				}
+			}
+			//if 8 ball hits pocket
+			else if (j == 7)
+			{
+				if (m_pEntityMngr->GetRigidBody(i)->IsColliding(m_pEntityMngr->GetRigidBody(j)))
+				{
+					ballCount = static_cast<int>(m_pEntityMngr->GetEntityCount()) - 9;
+					if (ballCount == 1) //only 8 ball is left
+					{
+						//game won
+						EightBallSunk = 1;
+					}
+					else
+					{
+						//game lost
+						EightBallSunk = 2;
+					}
 					RemoveBall(m_pEntityMngr->GetEntity(j));
 				}
 			}
@@ -314,9 +333,9 @@ void Simplex::Application::AddBalls(void)
 		name += "Ball.obj";
 		m_pEntityMngr->AddEntity(name);
 		//vector3 v3Position = vector3(glm::sphericalRand(25.0f));
-		float v1 = glm::linearRand(-30.0f, 30.0f);
-		float v2 = glm::linearRand(-30.0f, 30.0f);
-		float v3 = glm::linearRand(-30.0f, 30.0f);
+		float v1 = glm::linearRand(-28.0f, 28.0f);
+		float v2 = glm::linearRand(-28.0f, 28.0f);
+		float v3 = glm::linearRand(-28.0f, 28.0f);
 		vector3 v3Position = vector3(v1, v2, v3);
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
