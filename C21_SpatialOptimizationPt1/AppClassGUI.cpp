@@ -5,7 +5,23 @@ void Application::DrawGUI(void)
 {
 #pragma region Debugging Information
 	//Print info on the screen
-	uint nEmptyLines = 20;
+	uint nEmptyLines = 9;
+	for (uint i = 0; i < nEmptyLines; ++i)
+		m_pMeshMngr->PrintLine("");//Add a line on top
+
+	if (EightBallSunk == 1)
+	{
+		m_pMeshMngr->PrintLine("						GAME WON!!", C_BLACK);
+		m_pMeshMngr->PrintLine("					    FINAL SCORE: " + std::to_string(gameScore), C_BLACK);
+	}
+
+	else if (EightBallSunk == 2)
+	{
+		m_pMeshMngr->PrintLine("						GAME LOST!!", C_BLACK);
+		m_pMeshMngr->PrintLine("					    FINAL SCORE: " + std::to_string(gameScore), C_BLACK);
+	}
+
+	nEmptyLines = 10;
 	for (uint i = 0; i < nEmptyLines; ++i)
 		m_pMeshMngr->PrintLine("");//Add a line on top
 	//m_pMeshMngr->Print("						");
