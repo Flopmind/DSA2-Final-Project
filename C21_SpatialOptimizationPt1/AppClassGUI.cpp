@@ -71,6 +71,10 @@ void Application::DrawGUI(void)
 			ImGui::Text("Left Click and Drag to Increase Force");
 			ImGui::Text("Force: %i", textCueForce);
 			ImGui::Text("Press 'B' to spawn more balls");
+			if(m_pEntityMngr->isUseOct)
+				ImGui::Text("Using Octree - Press 'O' to Toggle");
+			else
+				ImGui::Text("Not Using Octree - Press 'O' to Toggle");
 			ImGui::Separator();
 		}
 		ImGui::End();

@@ -200,7 +200,7 @@ void Simplex::MyEntityManager::Update(void)
 	}
 	else
 	{
-		for (const auto&x : m_DimMap) 
+		/*for (const auto&x : m_DimMap) 
 		{
 			for (size_t i = 0; i < x.second.size(); i++)
 			{
@@ -211,6 +211,16 @@ void Simplex::MyEntityManager::Update(void)
 						if (!(i == j && x.first == y.first))
 							m_DimMap[x.first][i]->IsColliding(m_DimMap[y.first][j]);
 					}
+				}
+			}
+		}*/
+		for (size_t i = 0; i < m_uEntityCount; i++)
+		{
+			for (size_t j = 0; j < m_uEntityCount; j++)
+			{
+				if (i != j)
+				{
+					m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
 				}
 			}
 		}
