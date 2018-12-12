@@ -20,6 +20,7 @@ void Application::InitVariables(void)
 	vector3 v3Position;
 	matrix4 m4Position;
 	uint uIndex = 0;
+	bounds = 31.0f;
 
 	poolBallInfo = std::map<MyEntity*, PhysicsInfo*>();
 
@@ -43,7 +44,7 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(v1, v2, v3);
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(33.0f));
+		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(bounds));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(ball, info));
 		if (i == 8) //if it is the eight ball, set the rigidbody to use for collision logic
@@ -125,7 +126,7 @@ void Application::InitVariables(void)
 
 	cueBall = m_pEntityMngr->GetEntity(-1);
 	cueBallRB = cueBall->GetRigidBody();
-	PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(33.0f));
+	PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(bounds));
 	poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(cueBall, info));
 
 
@@ -217,7 +218,7 @@ void Application::Update(void)
 					String id = cueBall->GetUniqueID();
 					m_pEntityMngr->SetModelMatrix(m4Position, id);
 					poolBallInfo.erase(cueBall);
-					PhysicsInfo* info = new PhysicsInfo(1.0f, tempVec, vector3(0.0f), vector3(36.0f));
+					PhysicsInfo* info = new PhysicsInfo(1.0f, tempVec, vector3(0.0f), vector3(bounds));
 					poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(cueBall, info));
 				}
 
@@ -298,7 +299,7 @@ void Application::Update(void)
 				String id = cueBall->GetUniqueID();
 				m_pEntityMngr->SetModelMatrix(m4Position, id);
 				poolBallInfo.erase(cueBall);
-				PhysicsInfo* info = new PhysicsInfo(1.0f, tempVec, vector3(0.0f), vector3(36.0f));
+				PhysicsInfo* info = new PhysicsInfo(1.0f, tempVec, vector3(0.0f), vector3(bounds));
 				poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(cueBall, info));
 			}
 		}
@@ -401,7 +402,7 @@ void Simplex::Application::AddBalls(void)
 		vector3 v3Position = vector3(v1, v2, v3);
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
+		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(bounds));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(ball, info));
 		m_pRoot->AddEntity(ball);

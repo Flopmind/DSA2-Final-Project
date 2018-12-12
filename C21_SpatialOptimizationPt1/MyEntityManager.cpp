@@ -384,7 +384,7 @@ void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimensio
 	else 
 	{
 		//if the dim isn't new and there's nothing to add, assert false
-		assert(false);
+		//assert(false);
 	}
 		
 

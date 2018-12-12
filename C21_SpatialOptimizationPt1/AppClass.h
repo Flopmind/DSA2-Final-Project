@@ -54,6 +54,9 @@ class Application
 	MyEntity* cueBall = nullptr;
 	MyRigidBody* cueBallRB = nullptr;
 
+	//for consistency in bounds
+	float bounds = 0.0f;
+
 	std::map<MyEntity*, PhysicsInfo*> poolBallInfo;
 
 	String m_sProgrammer = "Large HeadDesk Colliders"; //programmer
