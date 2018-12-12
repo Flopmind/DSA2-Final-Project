@@ -329,13 +329,26 @@ void Simplex::MyEntityManager::AddDimension(uint a_uIndex, uint a_uDimension)
 	if (a_uIndex >= m_EntityList.size())
 		a_uIndex = m_EntityList.size() - 1;
 
+	const char* cstr = "CueBall";
+	String str = String(cstr);
+	bool fuck = m_EntityList[a_uIndex]->GetUniqueID() == str;//eat my ass, breakpoints
+	if (fuck)
+	{
+		std::cout << "cueball in dim " << a_uDimension << "\n";
+	}
+
+
 	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
 	if (it != m_DimMap.end())
+	{
 		m_DimMap[(int)a_uDimension].push_back(m_EntityList[a_uIndex]);
+		m_EntityList[a_uIndex]->AddDimension(a_uDimension);
+	}
 	else
 	{
 		m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
 		m_DimMap[a_uDimension].push_back(m_EntityList[a_uIndex]);
+		m_EntityList[a_uIndex]->AddDimension(a_uDimension);
 	}
 
 	//let the track its dimensions too
@@ -344,7 +357,13 @@ void Simplex::MyEntityManager::AddDimension(uint a_uIndex, uint a_uDimension)
 void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimension)
 {
 	//Get the entity
-	
+	const char* cstr = "CueBall";
+	String str = String(cstr);
+	bool fuck = a_sUniqueID == str;//eat my ass, breakpoints
+	if (fuck) 
+	{
+		std::cout << "cueball in dim " << a_uDimension << "\n";
+	}
 	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
 	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
 	if (it != m_DimMap.end() && pTemp) //if the dim is in the map and we have an entity to add
@@ -362,12 +381,18 @@ void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimensio
 	{
 		m_DimMap.insert(std::pair<int, std::vector<MyEntity*>>(a_uDimension, std::vector<MyEntity*>()));
 	}
-	//if the dim isn't new and there's nothing to add, do nothing
+	else 
+	{
+		//if the dim isn't new and there's nothing to add, assert false
+		assert(false);
+	}
 		
 
 }
 void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 {
+	
+
 	//if the list is empty return
 	if (m_EntityList.size() == 0)
 		return;
@@ -375,6 +400,16 @@ void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 	//if the index is larger than the number of entries we are asking for the last one
 	if (a_uIndex >= m_EntityList.size())
 		a_uIndex = m_EntityList.size() - 1;
+
+	const char* cstr = "CueBall";
+	String str = String(cstr);
+	bool fuck = m_EntityList[a_uIndex]->GetUniqueID() == str;//eat my ass, breakpoints
+	if (fuck)
+	{
+		std::cout << "cueball leaving dim " << a_uDimension << "\n";
+
+		assert(m_EntityList[a_uIndex]->m_DimensionList.size() != 0);
+	}
 
 	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
 	assert(it != m_DimMap.end()); //if you try to delete a dim that doesn't exist you're a moron
@@ -389,16 +424,26 @@ void Simplex::MyEntityManager::RemoveDimension(String a_sUniqueID, uint a_uDimen
 {
 	//Get the entity
 	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
+	const char* cstr = "CueBall";
+	String str = String(cstr);
+	bool fuck = a_sUniqueID == str;//eat my ass, breakpoints
+	if (fuck)
+	{
+		std::cout << "cueball leaving dim " << a_uDimension << "\n";
+	}
+	
 	//if the entity exists
 	if (pTemp)
 	{
 		std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
-		if (it != m_DimMap.end()) {
-			std::vector<MyEntity*>::iterator it = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), pTemp);
-			if (it != m_DimMap[a_uDimension].end())
-				m_DimMap[a_uDimension].erase(it);
-		}
+		assert(it != m_DimMap.end());
+		std::vector<MyEntity*>::iterator iter = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), pTemp);
+		if (iter != m_DimMap[a_uDimension].end())
+			m_DimMap[a_uDimension].erase(iter);
+	
 		pTemp->RemoveDimension(a_uDimension);
+
+		//assert(!(pTemp->m_DimensionList.size() == 0 && fuck));
 	}
 }
 void Simplex::MyEntityManager::ClearDimensionSet(uint a_uIndex)

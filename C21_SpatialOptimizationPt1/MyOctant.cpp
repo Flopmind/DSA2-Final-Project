@@ -168,7 +168,10 @@ void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 			{
 				if (!x.second[i]->GetRigidBody()->IsColliding(OctLookUpTable[x.first]->m_pRigidBody)) //if the entity is not colliding with the octant it's supposedly a part of
 				{
-					dirtyEntities.push_back(x.second[i]);
+					if (std::find(dirtyEntities.begin(), dirtyEntities.end(), x.second[i]) == dirtyEntities.end());//only mark dirty once
+						dirtyEntities.push_back(x.second[i]);
+
+					//
 					m_pEntityMngr->RemoveDimension(x.second[i]->GetUniqueID(), x.first);
 				}
 			}
@@ -188,9 +191,13 @@ void Simplex::MyOctant::Update() //this must ONLY be called on the root octant
 						m_pEntityMngr->AddDimension(dirtyEntities[i]->GetUniqueID(), x.first);
 						OctLookUpTable[x.first]->m_ContainedEnts.push_back(dirtyEntities[i]); //the amount of quote-enquote cache invalidation that could happen with this many lookup tables and unsynchronized data might super blow, who knows
 
-						dirtyDims.insert(x);
+						dirtyDims.insert(x);//check for subdivision
 					}
 				}
+			}
+			if ((dirtyEntities[i]->m_DimensionList.size() == 0))//dirty entities MUST be added to some dimension at the end of this
+			{
+				std::cout << "Entity "<< dirtyEntities[i]->GetUniqueID() <<" has no dimensions!\n";
 			}
 			//clean the dimensions that need subdivision
 			for (const auto&x : dirtyDims)
@@ -287,11 +294,13 @@ void MyOctant::Release(void)
 }
 void Simplex::MyOctant::Display(void)
 {
-	m_pRigidBody->AddToRenderList();
+	//m_pRigidBody->AddToRenderList();
 	for (uint i = 0; i < 8; i++)
 	{
 		if (m_pChild[i])
 			m_pChild[i]->Display();
+		else
+			m_pRigidBody->AddToRenderList();
 	}
 	//m_pMeshMngr->AddWireCubeToRenderList(glm::scale(vector3(70)), C_BLUE);
 }

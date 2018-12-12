@@ -33,7 +33,7 @@ void Application::InitVariables(void)
 		name += std::to_string(i);
 		name += "Ball.obj";
 		if (i != 8)
-			m_pEntityMngr->AddEntity(name);
+			m_pEntityMngr->AddEntity(name, name);//fuck it
 		else if (i == 8)
 			m_pEntityMngr->AddEntity(name, "8ball");
 		//vector3 v3Position = vector3(glm::sphericalRand(25.0f));
@@ -43,7 +43,7 @@ void Application::InitVariables(void)
 		vector3 v3Position = vector3(v1, v2, v3);
 		matrix4 m4Position = glm::translate(v3Position);
 		m_pEntityMngr->SetModelMatrix(m4Position);
-		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
+		PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(33.0f));
 		MyEntity* ball = m_pEntityMngr->GetEntity(-1);
 		poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(ball, info));
 		if (i == 8) //if it is the eight ball, set the rigidbody to use for collision logic
@@ -118,14 +118,14 @@ void Application::InitVariables(void)
 #pragma endregion pockets
 
 	//Adds Cue ball to the scene
-	m_pEntityMngr->AddEntity("Models\\cueBall.obj");
+	m_pEntityMngr->AddEntity("Models\\cueBall.obj", "CueBall");
 	v3Position = vector3(0.0f, 0.0f, 0.0f); //variable defined in above pragam region
 	m4Position = glm::translate(v3Position); //variable defined in above pragam region
 	m_pEntityMngr->SetModelMatrix(m4Position);
 
 	cueBall = m_pEntityMngr->GetEntity(-1);
 	cueBallRB = cueBall->GetRigidBody();
-	PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(36.0f));
+	PhysicsInfo* info = new PhysicsInfo(1.0f, v3Position, vector3(0.0f), vector3(33.0f));
 	poolBallInfo.insert(std::pair<MyEntity*, PhysicsInfo*>(cueBall, info));
 
 
