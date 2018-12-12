@@ -57,7 +57,7 @@ MyOctant::MyOctant(vector3 a_v3Center, float a_fSize)
 	v3MaxMin_list.push_back(a_v3Center - vector3(a_fSize));
 	v3MaxMin_list.push_back(a_v3Center + vector3(a_fSize));
 	m_pRigidBody = new MyRigidBody(v3MaxMin_list);
-	m_pRigidBody->m_fRadius = -10000.0f;
+	m_pRigidBody->m_fRadius = -100000.0f;
 	m_nCount++;
 	dimCounter++;
 }
