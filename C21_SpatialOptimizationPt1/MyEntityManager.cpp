@@ -418,11 +418,11 @@ void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
 	{
 		std::cout << "cueball leaving dim " << a_uDimension << "\n";
 
-		assert(m_EntityList[a_uIndex]->m_DimensionList.size() != 0);
+		//assert(m_EntityList[a_uIndex]->m_DimensionList.size() != 0);
 	}
 
 	std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
-	assert(it != m_DimMap.end()); //if you try to delete a dim that doesn't exist you're a moron
+	//assert(it != m_DimMap.end()); //if you try to delete a dim that doesn't exist you're a moron
 	std::vector<MyEntity*>::iterator iter = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), m_EntityList[a_uIndex]);//oh my god fuck iterators who thought this was okay
 	if (iter != m_DimMap[a_uDimension].end())
 		m_DimMap[a_uDimension].erase(iter);
@@ -446,7 +446,7 @@ void Simplex::MyEntityManager::RemoveDimension(String a_sUniqueID, uint a_uDimen
 	if (pTemp)
 	{
 		std::map<int, std::vector<MyEntity*>>::iterator it = m_DimMap.find(a_uDimension);
-		assert(it != m_DimMap.end());
+		//assert(it != m_DimMap.end());
 		std::vector<MyEntity*>::iterator iter = std::find(m_DimMap[a_uDimension].begin(), m_DimMap[a_uDimension].end(), pTemp);
 		if (iter != m_DimMap[a_uDimension].end())
 			m_DimMap[a_uDimension].erase(iter);

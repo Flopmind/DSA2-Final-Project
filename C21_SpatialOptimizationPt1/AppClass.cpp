@@ -33,8 +33,8 @@ void Application::InitVariables(void)
 		Simplex::String name = "Models\\";
 		name += std::to_string(i);
 		name += "Ball.obj";
-		if (i != 8)
-			m_pEntityMngr->AddEntity(name, name);//fuck it
+			if (i != 8)
+				m_pEntityMngr->AddEntity(name, name);//fuck it
 		else if (i == 8)
 			m_pEntityMngr->AddEntity(name, "8ball");
 		//vector3 v3Position = vector3(glm::sphericalRand(25.0f));

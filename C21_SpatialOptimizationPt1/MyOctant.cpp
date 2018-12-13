@@ -267,7 +267,7 @@ void Simplex::MyOctant::RemoveEntity(MyEntity * toRemove)
 		//cleaning the entity from all the various registries it exists within
 		m_pEntityMngr->RemoveDimension(i, x);
 		std::vector<MyEntity*>::iterator it = std::find(OctLookUpTable[x]->m_ContainedEnts.begin(), OctLookUpTable[x]->m_ContainedEnts.end(), toRemove);
-		assert(it != OctLookUpTable[x]->m_ContainedEnts.end());//safety
+		//assert(it != OctLookUpTable[x]->m_ContainedEnts.end());//safety
 		OctLookUpTable[x]->m_ContainedEnts.erase(it);
 
 	}
@@ -329,7 +329,7 @@ void MyOctant::SetDataOnVector(int a_nData){ m_lData.push_back(a_nData);}
 int& MyOctant::GetDataOnVector(int a_nIndex)
 {
 	int nIndex = static_cast<int>(m_lData.size());
-	assert(a_nIndex >= 0 && a_nIndex < nIndex);
+	//assert(a_nIndex >= 0 && a_nIndex < nIndex);
 	return m_lData[a_nIndex];
 }
 //--- Non Standard Singleton Methods
