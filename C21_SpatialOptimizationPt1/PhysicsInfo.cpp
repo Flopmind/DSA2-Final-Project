@@ -11,22 +11,25 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 {
 	velocity += acceleration;
 	acceleration = vector3(0.0f);
-	if (center.x + position.x > limits.x || center.x + position.x < -limits.x)
+	float futureX = center.x + position.x + velocity.x;
+	float futureY = center.y + position.y + velocity.y;
+	float futureZ = center.z + position.z + velocity.z;
+	if (futureX > limits.x || futureX < -limits.x)
 	{
 		velocity.x *= -1;
 	}
-	if (center.y + position.y > limits.y || center.y + position.y < -limits.y)
+	if (futureY > limits.y || futureY < -limits.y)
 	{
 		velocity.y *= -1;
 	}
-	if (center.z + position.z > limits.z || center.z + position.z < -limits.z)
+	if (futureZ > limits.z || futureZ < -limits.z)
 	{
 		velocity.z *= -1;
 	}
 	float velMag = magnitude(velocity);
 	if (velMag > 0)
 	{
-		vector3 frictionForce = (-frictionMagnitude * glm::normalize(velocity));
+		vector3 frictionForce = (-frictionMagnitude * normalize(velocity));
 		//std::cout << "fric - " << magnitude(frictionForce) << ";" << std::endl;
 		//std::cout << "vel - " << magnitude(velocity) << ";" << std::endl;
 		//std::cout << "net - " << magnitude(velocity - frictionForce) << ";" << std::endl;
@@ -43,7 +46,7 @@ void Simplex::PhysicsInfo::UpdateVelocity()
 	// clamp magnitude of velocity to max speed
 	if (magnitude(velocity) > MAX_SPEED)
 	{
-		velocity = glm::normalize(velocity) * MAX_SPEED;
+		velocity = normalize(velocity) * MAX_SPEED;
 	}
 	position += velocity;
 }
@@ -56,11 +59,11 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo* info)
 	{
 		return;
 	}
-	vector3 nextVelDirect = glm::normalize(position - info->position);
+	vector3 nextVelDirect = normalize(position - info->position);
 
 
 	//make all ball to ball collisions elastic
-	float getAngle = glm::dot(glm::normalize(oldVel), nextVelDirect);
+	float getAngle = dot(normalize(oldVel), nextVelDirect);
 	// [-1, 1]
 	std::cout << "angle - " << getAngle << std::endl;
 	float angle = acosf(getAngle);
@@ -82,7 +85,7 @@ void Simplex::PhysicsInfo::Collision(PhysicsInfo* info)
 			nextVecMag *= -1;
 		}
 		nextVecMag = sqrt(nextVecMag);
-		velocity = nextVecMag * glm::normalize(nextVec);
+		velocity = nextVecMag * normalize(nextVec);
 	}
 	else if (magnitude(info->velocity) == 0)
 	{
@@ -116,15 +119,31 @@ PhysicsInfo::~PhysicsInfo()
 {
 }
 
+float PhysicsInfo::dot(vector3 a, vector3 b)
+{
+	float dot = (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
+	if (dot < 0)
+	{
+		dot *= -1;
+	}
+	return dot;
+}
+
 vector3 PhysicsInfo::normalize(const vector3 &v)
 {
-	float sum = (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
+	float mag = magnitude(v);
+	if (mag == 0.0f)
+	{
+		return vector3(0.0f);
+	}
+	return glm::normalize(v);
+	/*float sum = (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
 	if (sum < 0)
 	{
 		sum *= -1;
 	}
 	float length_of_v = sqrt(sum);
-	return vector3(v.x / length_of_v, v.y / length_of_v, v.z / length_of_v);
+	return vector3(v.x / length_of_v, v.y / length_of_v, v.z / length_of_v);*/
 }
 
 float PhysicsInfo::magnitude(const vector3 &v)
@@ -134,12 +153,21 @@ float PhysicsInfo::magnitude(const vector3 &v)
 	{
 		sum *= -1;
 	}
-	float length_of_v = sqrt(sum);
+	float length_of_v;
+	if (sum > 0)
+	{
+		return sqrt(sum);
+	}
+	return 0.0f;
+	/*else
+	{
+		return 0.0f;
+	}
 	if (isnan(length_of_v))
 	{
 		throw ExceptionCollidedUnwind;
 	}
-	return length_of_v;
+	return length_of_v;*/
 }
 
 float PhysicsInfo::GetMagnitude()

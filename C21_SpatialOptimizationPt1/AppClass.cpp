@@ -187,7 +187,7 @@ void Application::Update(void)
 			if ( fDist < x.first->GetRigidBody()->GetRadius() + y->GetRadius())//if the entities are sphere colliding, resolve
 			{
 				//offset
-				vector3 v3Dir = PhysicsInfo::normalize(x.first->GetRigidBody()->GetCenterGlobal() - y->GetCenterGlobal());
+				vector3 v3Dir = normalize(x.first->GetRigidBody()->GetCenterGlobal() - y->GetCenterGlobal());
 				v3Dir = v3Dir * (2.05 * x.first->GetRigidBody()->GetRadius());
 
 				PhysicsInfo* collideInfo = Find(y);
@@ -410,4 +410,29 @@ void Simplex::Application::AddBalls(void)
 
 		m_pEntityMngr->Update();
 	}
+}
+
+vector3 Simplex::Application::normalize(const vector3 &v)
+{
+	float mag = magnitude(v);
+	if (mag == 0.0f)
+	{
+		return vector3(0.0f);
+	}
+	return glm::normalize(v);
+}
+
+float Simplex::Application::magnitude(const vector3 &v)
+{
+	float sum = (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
+	if (sum < 0)
+	{
+		sum *= -1;
+	}
+	float length_of_v = sqrt(sum);
+	if (isnan(length_of_v))
+	{
+		throw ExceptionCollidedUnwind;
+	}
+	return length_of_v;
 }

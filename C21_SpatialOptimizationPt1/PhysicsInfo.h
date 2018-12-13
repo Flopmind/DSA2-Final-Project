@@ -26,7 +26,8 @@ namespace Simplex
 		void SetVelocity(vector3 nextVel);
 		float GetMagnitude();
 
-		static vector3 normalize(const vector3 &v);
+		vector3 normalize(const vector3 &v);
+		float dot(vector3 a, vector3 b);
 		PhysicsInfo(float mss = 1.0f, vector3 pos = vector3(0.0f), vector3 center = vector3(0.0f), vector3 limits = vector3(50.0f));
 		~PhysicsInfo();
 	};

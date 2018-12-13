@@ -382,6 +382,8 @@ private:
 	USAGE: Add more pool balls
 	*/
 	void AddBalls(void);
+	vector3 normalize(const vector3 &v);
+	float magnitude(const vector3 &v);
 
 
 #pragma endregion
