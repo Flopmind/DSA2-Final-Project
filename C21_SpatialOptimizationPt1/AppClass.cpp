@@ -148,7 +148,8 @@ void Application::Update(void)
 	m_pSystem->Update();
 
 	//update the octree
-	m_pRoot->Update();
+	if (m_pEntityMngr->isUseOct)
+		m_pRoot->Update();
 
 	//Is the ArcBall active?
 	ArcBall();
